@@ -1,0 +1,63 @@
+{% extends 'base1.html' %}
+{% load static %}
+
+{% block content %}
+<section class="py-12 cultural-bg animate-in fade-in duration-700">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+        <div class="lg:col-span-2 space-y-8">
+            <div class="rounded-3xl overflow-hidden shadow-2xl relative h-96 border-4 border-white">
+                <img src="{{ place.image_main.url }}" class="w-full h-full object-cover">
+                <div class="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/90 to-transparent">
+                    <span class="bg-amber-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-2 inline-block">
+                        {{ place.category.name }}
+                    </span>
+                    <h1 class="logo-font text-4xl text-white font-bold drop-shadow-md">{{ place.name }}</h1>
+                </div>
+            </div>
+
+            <div class="bg-white p-10 rounded-3xl shadow-sm border border-amber-100">
+                <h3 class="text-red-800 font-bold text-xl mb-4 uppercase tracking-tighter border-b border-amber-50 pb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-scroll text-amber-500"></i> Sacred History & Description
+                </h3>
+                <p class="text-gray-700 leading-relaxed mb-6 font-medium">{{ place.description }}</p>
+                <div class="bg-amber-50/50 p-6 rounded-2xl border-l-4 border-red-700">
+                    <p class="italic text-gray-600 font-semibold">"{{ place.history }}"</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <div class="bg-red-800 text-white p-8 rounded-3xl shadow-xl border-b-4 border-amber-500">
+                <h4 class="font-bold text-lg mb-6 flex items-center gap-2 uppercase tracking-widest">
+                    <i class="fa-solid fa-circle-info text-amber-400"></i> Visitor Info
+                </h4>
+                <ul class="space-y-4 text-xs font-bold uppercase tracking-widest">
+                    <li class="flex justify-between border-b border-red-700/50 pb-2 text-red-100">
+                        <span>Timings:</span>
+                        <span class="text-amber-400">{{ place.timings }}</span>
+                    </li>
+                    <li class="flex justify-between border-b border-red-700/50 pb-2 text-red-100">
+                        <span>Entry Fee:</span>
+                        <span class="text-amber-400">₹{{ place.entry_fee }}</span>
+                    </li>
+                    <li class="flex flex-col gap-2 text-red-100">
+                        <span>Access Route:</span>
+                        <span class="text-white font-medium normal-case tracking-normal leading-relaxed italic">{{ place.how_to_reach }}</span>
+                    </li>
+                </ul>
+                <button class="btn-glow w-full mt-8 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                    Add to Trip Planner
+                </button>
+            </div>
+
+            <div class="rounded-3xl overflow-hidden h-64 shadow-md border-4 border-white grayscale hover:grayscale-0 transition-all duration-500">
+                <iframe width="100%" height="100%" frameborder="0" style="border:0"
+                    src="https://www.google.com/maps/embed/v1/place?key={{ google_maps_key }}&q={{ place.latitude }},{{ place.longitude }}"
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

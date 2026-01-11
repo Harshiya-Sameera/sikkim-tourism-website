@@ -1,0 +1,85 @@
+{% extends 'base2.html' %}
+{% load i18n %}
+
+{% block dashboard_content %}
+<div class="animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div class="mb-10">
+        <h2 class="logo-font text-3xl font-black text-gray-800 uppercase tracking-tight">{% translate "Command" %} <span class="text-red-700">{% translate "Center" %}</span></h2>
+        <p class="text-gray-400 text-[10px] font-bold uppercase tracking-[0.3em]">{% translate "Site Management & Intelligent Oversight" %}</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-amber-100 border-b-4 border-b-red-700">
+            <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">{% translate "Total Explorers" %}</p>
+            <h3 class="text-4xl font-bold text-gray-800">{{ total_users }}</h3>
+        </div>
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-amber-100 border-b-4 border-b-amber-500">
+            <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">{% translate "Sacred Places" %}</p>
+            <h3 class="text-4xl font-bold text-gray-800">{{ total_places }}</h3>
+        </div>
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-amber-100 border-b-4 border-b-red-700">
+            <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">{% translate "AI Plans Created" %}</p>
+            <h3 class="text-4xl font-bold text-gray-800">{{ total_plans }}</h3>
+        </div>
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-amber-100 border-b-4 border-b-amber-500">
+            <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">{% translate "API Status" %}</p>
+            <h3 class="text-sm font-black text-green-500 uppercase">{% translate "Operational" %}</h3>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 bg-white p-8 rounded-[3rem] shadow-xl border border-amber-50">
+            <div class="flex justify-between items-center mb-10">
+                <h4 class="font-black text-gray-800 uppercase text-[10px] tracking-widest">{% translate "Content Oversight" %}</h4>
+                <div class="flex gap-2">
+                    <a href="/admin/tourism/touristplace/add/" class="p-2 bg-red-700 text-white rounded-xl shadow-lg hover:scale-110 transition-all"><i class="fa-solid fa-plus"></i></a>
+                </div>
+            </div>
+            
+            <div class="space-y-6">
+                {% for place in most_viewed %}
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 group hover:border-red-200 transition-all">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-white overflow-hidden shadow-sm">
+                            <img src="/media/{{ place.image_main }}" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-800 text-sm">{{ place.name }}</p>
+                            <p class="text-[9px] text-amber-600 font-black uppercase tracking-widest">{{ place.location_name }}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-lg font-black text-gray-800 leading-none">{{ place.view_count }}</p>
+                        <p class="text-[8px] font-black text-gray-400 uppercase tracking-tighter">{% translate "Views" %}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <div class="bg-gray-900 p-8 rounded-[3rem] shadow-2xl text-white">
+                <h4 class="font-black uppercase text-[10px] tracking-widest mb-8 text-amber-400">{% translate "Admin Services" %}</h4>
+                <div class="grid grid-cols-1 gap-4">
+                    <a href="{% url 'admin_user_management' %}" class="flex items-center justify-between p-5 bg-white/5 rounded-2xl hover:bg-white/10 transition-all border border-white/5 group">
+                        <span class="text-xs font-bold">{% translate "Manage Explorers" %}</span>
+                        <i class="fa-solid fa-users text-amber-500 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                    <a href="{% url 'admin_ai_monitor' %}" class="flex items-center justify-between p-5 bg-white/5 rounded-2xl hover:bg-white/10 transition-all border border-white/5 group">
+                        <span class="text-xs font-bold">{% translate "AI Core Health" %}</span>
+                        <i class="fa-solid fa-microchip text-red-500 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                    <a href="{% url 'admin_analytics' %}" class="flex items-center justify-between p-5 bg-white/5 rounded-2xl hover:bg-white/10 transition-all border border-white/5 group">
+                        <span class="text-xs font-bold">{% translate "Platform Analytics" %}</span>
+                        <i class="fa-solid fa-chart-pie text-amber-500 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                    <a href="/admin/" class="flex items-center justify-between p-5 bg-red-700/20 rounded-2xl hover:bg-red-700/40 transition-all border border-red-700/20 group">
+                        <span class="text-xs font-bold text-red-400">{% translate "Django Root Admin" %}</span>
+                        <i class="fa-solid fa-gear text-red-400"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

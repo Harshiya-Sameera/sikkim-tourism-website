@@ -1,0 +1,118 @@
+{% extends user.is_authenticated|yesno:"base2.html,base1.html" %}
+{% load i18n %}
+
+{% block content %}
+{% if user.is_authenticated %}
+    {% block dashboard_content %}
+        {% render_planner_body %}
+    {% endblock %}
+{% else %}
+    {% render_planner_body %}
+{% endif %}
+{% endblock %}
+
+{% block planner_body %}
+<section class="py-12 cultural-bg min-h-screen">
+    <div class="max-w-5xl mx-auto px-4">
+        
+        <div class="text-center mb-12 animate-in fade-in slide-in-from-top-5 duration-700">
+            <h2 class="logo-font text-4xl font-black text-red-800 mb-2">
+                AI <span class="text-amber-500">{% translate "Trip Planner" %}</span>
+            </h2>
+            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.3em]">{% translate "Craft your sacred journey in seconds" %}</p>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] shadow-2xl border border-amber-100 p-8 md:p-12 mb-12 shadow-amber-900/5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <label class="block text-[10px] font-black uppercase text-gray-400 ml-2 tracking-widest">{% translate "Number of Days" %}</label>
+                    <select id="trip-days" class="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-amber-500 outline-none font-bold text-gray-700">
+                        <option value="1">1 {% translate "Day (Quick Tour)" %}</option>
+                        <option value="3">3 {% translate "Days (Cultural Deep Dive)" %}</option>
+                        <option value="5" selected>5 {% translate "Days (Complete Sikkim)" %}</option>
+                    </select>
+                </div>
+                <div class="space-y-4">
+                    <label class="block text-[10px] font-black uppercase text-gray-400 ml-2 tracking-widest">{% translate "Interests" %}</label>
+                    <input type="text" id="trip-interests" placeholder="{% translate 'e.g. Monasteries, Photography, Trekking' %}" 
+                           class="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-amber-500 outline-none font-bold text-gray-700">
+                </div>
+            </div>
+            
+            <button onclick="generatePlan()" class="btn-glow w-full mt-10 py-5 rounded-2xl text-white font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> {% translate "Generate My Itinerary" %}
+            </button>
+        </div>
+
+        <div id="planner-loader" class="hidden text-center py-12">
+            <div class="inline-block animate-spin-slow mb-4">
+                <i class="fa-solid fa-dharmachakra text-5xl text-amber-500"></i>
+            </div>
+            <p class="logo-font text-red-800 font-bold animate-pulse">{% translate "Our AI Monk is consulting the stars..." %}</p>
+        </div>
+
+        <div id="itinerary-results" class="hidden space-y-8 animate-in zoom-in-95 duration-500">
+            </div>
+    </div>
+</section>
+
+
+
+<script>
+async function generatePlan() {
+    const days = document.getElementById('trip-days').value;
+    const interests = document.getElementById('trip-interests').value;
+    const loader = document.getElementById('planner-loader');
+    const results = document.getElementById('itinerary-results');
+
+    if(!interests) { 
+        alert("{% translate 'Please share your interests traveler!' %}"); 
+        return; 
+    }
+
+    loader.classList.remove('hidden');
+    results.classList.add('hidden');
+    results.innerHTML = "";
+
+    try {
+        const res = await fetch('/itinerary/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+            body: JSON.stringify({ days, interests })
+        });
+        const data = await res.json();
+        
+        loader.classList.add('hidden');
+        results.classList.remove('hidden');
+
+        let currentDay = 0;
+        let html = "";
+
+        data.plan.forEach(item => {
+            if(item.day !== currentDay) {
+                currentDay = item.day;
+                html += `<h3 class="logo-font text-2xl font-bold text-red-800 mt-12 mb-6 border-b-2 border-amber-400 inline-block pb-1">{% translate "Day" %} ${currentDay}</h3>`;
+            }
+
+            html += `
+            <div class="relative pl-8 border-l-2 border-amber-100 pb-8 last:border-0">
+                <div class="absolute -left-[9px] top-0 w-4 h-4 bg-amber-500 rounded-full border-4 border-white"></div>
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-amber-50 hover:shadow-md transition-all">
+                    <div class="flex flex-col md:flex-row justify-between gap-2 mb-2">
+                        <span class="text-[10px] font-black uppercase text-red-700 tracking-widest"><i class="fa-solid fa-clock mr-1"></i> ${item.time}</span>
+                        <span class="text-[10px] font-black uppercase text-amber-600 tracking-widest"><i class="fa-solid fa-location-dot mr-1"></i> ${item.location}</span>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">${item.activity}</h4>
+                </div>
+            </div>`;
+        });
+
+        results.innerHTML = html;
+        results.scrollIntoView({ behavior: 'smooth' });
+
+    } catch (e) {
+        loader.innerHTML = "<p class='text-red-600 font-bold'>{% translate 'The spirits are quiet. Please try again later.' %}</p>";
+    }
+}
+</script>
+{% endblock %}

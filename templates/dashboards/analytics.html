@@ -1,0 +1,64 @@
+{% extends 'base2.html' %}
+{% load i18n %}
+
+{% block dashboard_content %}
+<div class="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
+    <div class="bg-gray-900 p-10 rounded-[3rem] text-white flex justify-between items-center shadow-2xl relative overflow-hidden">
+        <div class="relative z-10">
+            <h1 class="logo-font text-3xl font-black uppercase">{% translate "Platform Analytics" %}</h1>
+            <p class="text-amber-400 text-[10px] font-bold uppercase tracking-[0.3em] mt-2">{% translate "Strategic Insights & Data Trends" %}</p>
+        </div>
+        <i class="fa-solid fa-chart-line text-amber-500 text-4xl opacity-50"></i>
+        <i class="fa-solid fa-dharmachakra absolute -bottom-10 -right-10 text-[200px] opacity-5 animate-spin-slow"></i>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-white p-8 rounded-[3rem] border border-amber-100 shadow-sm">
+            <h3 class="text-xs font-black text-gray-800 uppercase tracking-widest mb-8">{% translate "Destinations by Category" %}</h3>
+            <div class="h-64">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white p-8 rounded-[3rem] border border-amber-100 shadow-sm flex flex-col">
+            <h3 class="text-xs font-black text-gray-800 uppercase tracking-widest mb-8">{% translate "Platform Activity" %}</h3>
+            <div class="space-y-6 flex-1 flex flex-col justify-center">
+                <div class="flex justify-between items-end border-b border-gray-50 pb-4">
+                    <span class="text-xs font-bold text-gray-400 uppercase">{% translate "Total Itineraries" %}</span>
+                    <span class="text-3xl font-black text-red-700">{{ total_itineraries }}</span>
+                </div>
+                <div class="flex justify-between items-end border-b border-gray-50 pb-4">
+                    <span class="text-xs font-bold text-gray-400 uppercase">{% translate "AI Invocations" %}</span>
+                    <span class="text-3xl font-black text-amber-500">Active</span>
+                </div>
+            </div>
+            <p class="text-[9px] text-gray-400 font-bold uppercase mt-6 italic">{% translate "Data synchronized with production database" %}</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ labels|safe }},
+            datasets: [{
+                data: {{ data|safe }},
+                backgroundColor: ['#D32F2F', '#FFB800', '#1f2937', '#f8fafc'],
+                borderWidth: 0,
+                hoverOffset: 20
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { font: { weight: 'bold', size: 10 } } }
+            },
+            cutout: '70%'
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base1.html' %}
+{% load i18n %}
+
+{% block content %}
+<section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+            <h2 class="logo-font text-3xl font-bold text-gray-800 border-l-4 border-amber-500 pl-4">
+                Explore <span class="text-red-700">Sikkim</span>
+            </h2>
+            
+            <form action="." method="GET" class="w-full md:w-96 flex bg-gray-100 rounded-full p-1 border border-gray-200">
+                <input type="text" name="q" placeholder="Search places..." 
+                       class="bg-transparent flex-1 px-4 py-2 text-sm outline-none">
+                <button type="submit" class="bg-red-700 text-white px-6 py-2 rounded-full text-xs font-bold uppercase">
+                    Search
+                </button>
+            </form>
+        </div>
+
+        <div class="flex flex-wrap gap-3 mb-12">
+            <a href="{% url 'explore_places' %}" 
+               class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest border transition-all 
+               {% if not request.GET.category %}bg-amber-500 text-white border-amber-500{% else %}bg-white text-gray-600 border-gray-200 hover:border-amber-500{% endif %}">
+                All
+            </a>
+            {% for cat in categories %}
+            <a href="?category={{ cat.name }}" 
+               class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest border transition-all
+               {% if request.GET.category == cat.name %}bg-amber-500 text-white border-amber-500{% else %}bg-white text-gray-600 border-gray-200 hover:border-amber-500{% endif %}">
+                {{ cat.name }}
+            </a>
+            {% endfor %}
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {% for place in places %}
+            <div class="group bg-white rounded-3xl shadow-md border border-gray-100 overflow-hidden hover:shadow-xl transition-all flex flex-col">
+                <div class="h-48 overflow-hidden relative">
+                    <img src="{{ place.image_main.url }}" alt="{{ place.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute top-3 left-3 bg-red-700/90 text-white text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-tighter">
+                        {{ place.category.name }}
+                    </div>
+                </div>
+                <div class="p-5 flex-1 flex flex-col">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">{{ place.name }}</h3>
+                    <p class="text-gray-500 text-xs leading-relaxed mb-4 line-clamp-3">{{ place.description }}</p>
+                    <div class="mt-auto flex justify-between items-center">
+                        <span class="text-amber-600 text-[10px] font-bold uppercase"><i class="fa-solid fa-location-dot"></i> {{ place.location_name }}</span>
+                        <a href="/place/{{ place.id }}/" class="text-red-700 text-[10px] font-black uppercase tracking-widest hover:underline">Details →</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full py-20 text-center">
+                <i class="fa-solid fa-mountain-sun text-4xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500 font-medium">No sacred places found matching your search.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

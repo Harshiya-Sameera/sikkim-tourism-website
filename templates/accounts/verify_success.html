@@ -1,0 +1,26 @@
+{% extends 'base1.html' %}
+{% load i18n %}
+{% block content %}
+
+<div class="flex items-center justify-center py-20 px-4 cultural-bg">
+    <div class="max-w-md w-full text-center bg-white p-12 rounded-[2rem] shadow-2xl border border-amber-100">
+        <div class="w-20 h-20 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+            <i class="fa-solid fa-dharmachakra text-4xl animate-spin-slow"></i>
+        </div>
+
+        <h1 class="logo-font text-2xl font-black text-red-800 mb-4 tracking-tighter uppercase">
+            {% blocktranslate %}Profile <span class="text-amber-500">Activated</span>{% endblocktranslate %}
+        </h1>
+
+        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-relaxed mb-8">
+            {% translate "Your account has been successfully verified. You are now part of our Sikkim AI explorer network." %}
+        </p>
+        
+        <a href="{% url 'login' %}"
+           class="btn-glow text-white px-10 py-4 rounded-xl font-black uppercase tracking-widest text-xs inline-block">
+            {% translate "Proceed to Login" %}
+        </a>
+    </div>
+</div>
+
+{% endblock %}

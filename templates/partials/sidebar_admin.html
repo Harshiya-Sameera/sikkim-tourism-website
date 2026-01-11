@@ -1,0 +1,32 @@
+{% load i18n %}
+<p class="nav-header text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2 mb-3 mt-4">{% translate "Management" %}</p>
+
+<a href="{% url 'admin_dashboard' %}" class="nav-item flex items-center gap-3 p-3.5 rounded-2xl text-gray-600 hover:bg-amber-50 transition-all font-bold text-xs {% if request.resolver_match.url_name == 'admin_dashboard' %}active-link{% endif %}">
+    <i class="fa-solid fa-chart-line text-lg"></i> <span class="nav-text">{% translate "Admin Overview" %}</span>
+</a>
+
+<a href="{% url 'admin_analytics' %}" class="nav-item flex items-center gap-3 p-3.5 rounded-2xl text-gray-600 hover:bg-amber-50 transition-all font-bold text-xs {% if request.resolver_match.url_name == 'admin_analytics' %}active-link{% endif %}">
+    <i class="fa-solid fa-chart-pie text-lg"></i> <span class="nav-text">{% translate "Platform Analytics" %}</span>
+</a>
+
+<a href="{% url 'admin_ai_monitor' %}" class="nav-item flex items-center gap-3 p-3.5 rounded-2xl text-gray-600 hover:bg-amber-50 transition-all font-bold text-xs {% if request.resolver_match.url_name == 'admin_ai_monitor' %}active-link{% endif %}">
+    <i class="fa-solid fa-microchip text-lg"></i> <span class="nav-text">{% translate "AI Service Logs" %}</span>
+</a>
+
+<p class="nav-header text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2 mb-3 mt-6">{% translate "Operations" %}</p>
+<a href="{% url 'admin_user_management' %}" class="nav-item flex items-center gap-3 p-3.5 rounded-2xl text-gray-600 hover:bg-amber-50 transition-all font-bold text-xs {% if request.resolver_match.url_name == 'admin_user_management' %}active-link{% endif %}">
+    <i class="fa-solid fa-users-gear text-lg"></i> <span class="nav-text">{% translate "Traveler Directory" %}</span>
+</a>
+
+<a href="/admin/tourism/touristplace/" class="nav-item flex items-center gap-3 p-3.5 rounded-2xl text-gray-600 hover:bg-amber-50 transition-all font-bold text-xs">
+    <i class="fa-solid fa-map-location text-lg"></i> <span class="nav-text">{% translate "Content Manager" %}</span>
+</a>
+
+<p class="nav-header text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2 mb-3 mt-6">{% translate "System" %}</p>
+<a href="{% url 'interactive_map' %}" class="nav-item flex items-center gap-3 p-3.5 rounded-2xl text-gray-600 hover:bg-amber-50 transition-all font-bold text-xs">
+    <i class="fa-solid fa-earth-asia text-lg"></i> <span class="nav-text">{% translate "Geographic Map" %}</span>
+</a>
+
+<a href="{% url 'landing' %}" class="nav-item flex items-center gap-3 p-3.5 rounded-2xl text-gray-600 hover:bg-amber-50 transition-all font-bold text-xs">
+    <i class="fa-solid fa-house-chimney text-lg"></i> <span class="nav-text">{% translate "View Site" %}</span>
+</a>

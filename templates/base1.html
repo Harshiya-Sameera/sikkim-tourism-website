@@ -1,0 +1,300 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sikkim AI Tourism Platform</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Metamorphous&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --monastic-gold: #FFB800;
+            --saffron-red: #D32F2F;
+            --peaceful-bg: #fdfcf8;
+            --text-dark: #1f2937;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .logo-font {
+            font-family: 'Metamorphous', cursive;
+        }
+
+        .cultural-bg {
+            background-color: var(--peaceful-bg);
+            background-image: radial-gradient(circle at 2px 2px, rgba(211, 47, 47, 0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+
+        .btn-glow {
+            background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 25px rgba(255, 184, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--monastic-gold);
+        }
+
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--saffron-red);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            color: var(--saffron-red) !important;
+            font-weight: 700;
+        }
+
+        /* Custom Scrollbar for Chat */
+        #chat-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #chat-content::-webkit-scrollbar-thumb {
+            background: var(--monastic-gold);
+            border-radius: 10px;
+        }
+
+        /* AI Message Bubble Styling */
+        .ai-bubble-content h3 {
+            color: var(--monastic-gold);
+            font-size: 14px;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+
+        .ai-bubble-content strong {
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body class="cultural-bg min-h-screen flex flex-col">
+    <div class="h-1.5 w-full bg-gradient-to-r from-red-700 via-amber-400 to-red-700"></div>
+
+    <nav class="glass-nav sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-20 items-center">
+
+            <div class="flex items-center gap-3">
+                <a href="{% url 'landing' %}" class="flex items-center gap-3">
+                    <div
+                        class="relative w-12 h-12 bg-white rounded-full flex items-center justify-center border-2 border-amber-500 shadow-md">
+                        <i class="fa-solid fa-dharmachakra text-2xl text-amber-600 animate-spin-slow"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="logo-font font-bold text-xl tracking-tight text-red-800 leading-none">
+                            SIKKIM <span class="text-amber-500">AI</span>
+                        </span>
+                        <span class="text-[9px] uppercase tracking-[0.25em] font-bold text-gray-500">
+                            Tourism & Monasteries
+                        </span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="hidden xl:flex items-center gap-6">
+                <a href="{% url 'landing' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'landing' %}active{% endif %} text-[11px] font-bold uppercase tracking-widest text-gray-600">
+                    Home
+                </a>
+
+                <a href="{% url 'explore' %}"
+                    class="nav-link {% if request.resolver_match.url_name in 'explore explore_places place_detail' %}active{% endif %} text-[11px] font-bold uppercase tracking-widest text-gray-600">
+                    Explore
+                </a>
+
+                <a href="{% url 'categories' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'categories' %}active{% endif %} text-[11px] font-bold uppercase tracking-widest text-gray-600">
+                    Categories
+                </a>
+
+                <a href="{% url 'itinerary' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'itinerary' %}active{% endif %} text-[11px] font-bold uppercase tracking-widest text-gray-600">
+                    Trip Planner
+                </a>
+
+                <a href="{% url 'interactive_map' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'interactive_map' %}active{% endif %} text-[11px] font-bold uppercase tracking-widest text-gray-600">
+                    Interactive Map
+                </a>
+
+                <a href="{% url 'ai_lens' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'ai_lens' %}active{% endif %} text-[11px] font-bold uppercase tracking-widest text-gray-600">
+                    AI Lens
+                </a>
+            </div>
+
+
+            <div class="flex items-center gap-4">
+                <!-- <div class="relative inline-block text-left">
+                    <button
+                        class="flex items-center gap-2 bg-amber-50 hover:bg-white px-3 py-1.5 rounded-full border border-amber-200 transition-all text-[10px] font-black uppercase text-gray-700">
+                        <i class="fa-solid fa-globe text-amber-600"></i>
+                        {% get_current_language as CURRENT_LANG %}
+                        {% if CURRENT_LANG == 'hi' %}HINDI{% else %}ENGLISH{% endif %}
+                    </button>
+                </div> -->
+
+                <div class="h-8 w-px bg-gray-200 hidden sm:block"></div>
+
+                <div class="flex items-center gap-4">
+                    {% if user.is_authenticated %}
+                    <a href="/profile/"
+                        class="text-[10px] font-bold text-gray-700 hover:text-red-700 uppercase tracking-widest">Profile</a>
+                    <a href="{% url 'logout' %}"
+                        class="text-[10px] font-bold text-red-600 uppercase tracking-widest">Logout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}"
+                        class="text-[11px] font-bold text-gray-600 hover:text-red-700 transition uppercase tracking-widest">Login</a>
+                    <a href="{% url 'signup' %}"
+                        class="btn-glow text-white px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Explore
+                        Now</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="border-t border-amber-100 bg-white py-10 text-center">
+        <div class="mb-6 flex justify-center gap-8 text-gray-400">
+            <a href="#" class="hover:text-amber-500 transition-colors"><i
+                    class="fa-brands fa-instagram text-xl"></i></a>
+            <a href="#" class="hover:text-amber-500 transition-colors"><i class="fa-brands fa-facebook text-xl"></i></a>
+            <a href="#" class="hover:text-amber-500 transition-colors"><i
+                    class="fa-brands fa-x-twitter text-xl"></i></a>
+        </div>
+        <p class="text-[10px] text-gray-400 font-bold tracking-[0.3em] uppercase">
+            &copy; 2026 Sikkim Tourism AI Platform | B.Tech Project
+        </p>
+    </footer>
+
+    <div id="chat-wrapper" class="fixed bottom-6 right-6 z-[1000]">
+        <button onclick="toggleChat()"
+            class="w-16 h-16 bg-red-700 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-all border-4 border-white animate-bounce">
+            <i class="fa-solid fa-om text-2xl"></i>
+        </button>
+
+        <div id="chat-window"
+            class="hidden absolute bottom-20 right-0 w-85 sm:w-96 h-[500px] bg-white rounded-2xl shadow-2xl border border-amber-100 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5">
+            <div class="bg-red-700 p-4 text-white flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                        <i class="fa-solid fa-robot text-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-black uppercase tracking-widest leading-none">Virtual Monk</h4>
+                        <span class="text-[9px] text-amber-300 font-bold">Online Travel Guide</span>
+                    </div>
+                </div>
+                <button onclick="toggleChat()" class="hover:bg-white/10 p-2 rounded-full"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div id="chat-content" class="flex-1 p-4 overflow-y-auto space-y-4 bg-orange-50/30">
+                <div
+                    class="bg-white border border-amber-100 p-3 rounded-2xl rounded-tl-none text-xs font-medium text-gray-700 shadow-sm self-start max-w-[85%]">
+                    Tashi Delek! I am your AI Guide to Sikkim. Ask me about monasteries, hidden lakes, or the best time
+                    to visit.
+                </div>
+            </div>
+
+            <div class="p-3 border-t bg-white">
+                <div class="flex gap-2 bg-gray-100 rounded-xl p-1 items-center">
+                    <input id="chat-input" type="text" placeholder="Ask your guide..."
+                        class="flex-1 text-xs p-2.5 bg-transparent outline-none font-medium"
+                        onkeypress="if(event.key === 'Enter') sendMsg()">
+                    <button onclick="sendMsg()"
+                        class="bg-red-700 text-white w-10 h-10 rounded-lg flex items-center justify-center hover:bg-red-800 transition-colors">
+                        <i class="fa-solid fa-paper-plane text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleChat() {
+            const win = document.getElementById('chat-window');
+            win.classList.toggle('hidden');
+            if (!win.classList.contains('hidden')) document.getElementById('chat-input').focus();
+        }
+
+        async function sendMsg() {
+            const input = document.getElementById('chat-input');
+            const content = document.getElementById('chat-content');
+            const val = input.value.trim();
+            if (!val) return;
+
+            // Add User Bubble
+            content.innerHTML += `<div class="bg-red-700 text-white p-3 rounded-2xl rounded-tr-none text-xs font-bold self-end max-w-[85%] ml-auto shadow-md">${val}</div>`;
+            input.value = "";
+            content.scrollTop = content.scrollHeight;
+
+            // Show Thinking State
+            const tid = "t-" + Date.now();
+            content.innerHTML += `<div id="${tid}" class="flex gap-1 p-2"><div class="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce"></div><div class="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce delay-75"></div><div class="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce delay-150"></div></div>`;
+            content.scrollTop = content.scrollHeight;
+
+            try {
+                const res = await fetch('/chatbot/query/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+                    body: JSON.stringify({ msg: val })
+                });
+                const data = await res.json();
+                document.getElementById(tid).remove();
+
+                // Formatted AI Bubble
+                content.innerHTML += `
+                    <div class="bg-white border border-amber-200 p-3 rounded-2xl rounded-tl-none shadow-sm self-start max-w-[90%] ai-bubble-content">
+                        <div class="text-[8px] uppercase font-black text-red-700 mb-1 border-b border-red-50 pb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-circle-nodes"></i> AI Guide Wisdom
+                        </div>
+                        <div class="text-xs leading-relaxed text-gray-700 font-medium">${data.reply.replace(/\n/g, '<br>')}</div>
+                    </div>`;
+                content.scrollTop = content.scrollHeight;
+            } catch (e) {
+                document.getElementById(tid).innerHTML = "<span class='text-[10px] text-red-500'>Connection lost.</span>";
+            }
+        }
+    </script>
+</body>
+
+</html>

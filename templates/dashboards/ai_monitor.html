@@ -1,0 +1,51 @@
+{% extends 'base2.html' %}
+{% load i18n %}
+
+{% block dashboard_content %}
+<div class="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
+    <div class="flex justify-between items-end mb-8 border-b-2 border-amber-100 pb-6">
+        <div>
+            <h1 class="logo-font text-3xl font-black text-red-800 uppercase">{% translate "AI Core" %} <span class="text-amber-500">{% translate "Monitor" %}</span></h1>
+            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-[0.3em]">{% translate "Neural Link Status & Performance" %}</p>
+        </div>
+        <div class="flex items-center gap-2 bg-green-50 px-4 py-2 rounded-full border border-green-100">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span class="text-[10px] font-black text-green-600 uppercase">{{ status }}</span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white p-8 rounded-[2.5rem] border border-amber-100 shadow-sm">
+            <i class="fa-solid fa-brain text-red-700 text-2xl mb-4"></i>
+            <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{% translate "Active LLM" %}</p>
+            <h3 class="text-xl font-bold text-gray-800">{{ model }}</h3>
+        </div>
+
+        <div class="bg-white p-8 rounded-[2.5rem] border border-amber-100 shadow-sm">
+            <i class="fa-solid fa-bolt text-amber-500 text-2xl mb-4"></i>
+            <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{% translate "Response Latency" %}</p>
+            <h3 class="text-xl font-bold text-gray-800">{{ latency }}</h3>
+        </div>
+
+        <div class="bg-white p-8 rounded-[2.5rem] border border-amber-100 shadow-sm">
+            <i class="fa-solid fa-microchip text-gray-800 text-2xl mb-4"></i>
+            <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{% translate "API Usage Count" %}</p>
+            <h3 class="text-xl font-bold text-gray-800">{{ api_usage }}</h3>
+        </div>
+    </div>
+
+    <div class="bg-white p-10 rounded-[3rem] border border-amber-50 shadow-xl">
+        <h4 class="text-xs font-black text-gray-800 uppercase tracking-[0.2em] mb-8">{% translate "AI Core Capabilities" %}</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% for cap in capabilities %}
+            <div class="flex items-center gap-4 p-5 bg-orange-50/30 rounded-2xl border border-amber-50">
+                <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                    <i class="fa-solid fa-check text-green-500 text-xs"></i>
+                </div>
+                <span class="text-sm font-bold text-gray-700">{{ cap }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

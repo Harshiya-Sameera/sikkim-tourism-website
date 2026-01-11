@@ -1,0 +1,31 @@
+{% load i18n %}
+<p class="nav-header text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2 mb-3 mt-4">{% translate "My Journey" %}</p>
+
+<a href="{% url 'user_dashboard' %}" class="nav-item flex items-center gap-3 p-3.5 rounded-2xl text-gray-600 hover:bg-amber-50 transition-all font-bold text-xs {% if request.resolver_match.url_name == 'user_dashboard' %}active-link{% endif %}">
+    <i class="fa-solid fa-compass text-lg"></i> <span class="nav-text">{% translate "Saved Plans" %}</span>
+</a>
+
+<a href="{% url 'itinerary' %}" class="nav-item flex items-center gap-3 p-3.5 rounded-2xl text-gray-600 hover:bg-amber-50 transition-all font-bold text-xs {% if request.resolver_match.url_name == 'itinerary' %}active-link{% endif %}">
+    <i class="fa-solid fa-calendar-check text-lg"></i> <span class="nav-text">{% translate "Create Itinerary" %}</span>
+</a>
+
+<a href="{% url 'chatbot:chat_home' %}" class="nav-item flex items-center gap-3 p-3.5 rounded-2xl text-gray-600 hover:bg-amber-50 transition-all font-bold text-xs">
+    <i class="fa-solid fa-om text-lg"></i> <span class="nav-text">{% translate "Virtual Monk AI" %}</span>
+</a>
+
+<p class="nav-header text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2 mb-3 mt-6">{% translate "Discovery" %}</p>
+<a href="{% url 'explore' %}" class="nav-item flex items-center gap-3 p-3.5 rounded-2xl text-gray-600 hover:bg-amber-50 transition-all font-bold text-xs">
+    <i class="fa-solid fa-mountain-sun text-lg"></i> <span class="nav-text">{% translate "Explore Sikkim" %}</span>
+</a>
+
+<a href="{% url 'categories' %}" class="nav-item flex items-center gap-3 p-3.5 rounded-2xl text-gray-600 hover:bg-amber-50 transition-all font-bold text-xs">
+    <i class="fa-solid fa-layer-group text-lg"></i> <span class="nav-text">{% translate "Categories" %}</span>
+</a>
+
+<a href="{% url 'interactive_map' %}" class="nav-item flex items-center gap-3 p-3.5 rounded-2xl text-gray-600 hover:bg-amber-50 transition-all font-bold text-xs">
+    <i class="fa-solid fa-map-location-dot text-lg"></i> <span class="nav-text">{% translate "Interactive Map" %}</span>
+</a>
+
+<a href="{% url 'ai_lens' %}" class="nav-item flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-amber-50 font-bold text-xs">
+    <i class="fa-solid fa-camera-retro text-lg"></i> <span class="nav-text">{% translate "AI Lens" %}</span>
+</a>
