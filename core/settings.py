@@ -2,8 +2,34 @@ import os
 from pathlib import Path
 from django.utils.translation import gettext_lazy as _
 from dotenv import load_dotenv
-import os
 
+import os
+import sys
+
+if os.name == 'nt':
+    # 1. Path confirmed by your shell output
+    OSGEO4W_ROOT = r'C:\QGIS 3.44.6'
+    OSGEO4W_BIN = os.path.join(OSGEO4W_ROOT, 'bin')
+    
+    # 2. Put QGIS first in the system path to avoid conflicts
+    os.environ['PATH'] = OSGEO4W_BIN + os.pathsep + os.environ['PATH']
+    
+    # 3. GeoDjango specific variables
+    os.environ['GDAL_DATA'] = os.path.join(OSGEO4W_ROOT, 'apps', 'gdal', 'share', 'gdal')
+    os.environ['PROJ_LIB'] = os.path.join(OSGEO4W_ROOT, 'share', 'proj')
+    
+    # 4. Point to the specific DLL
+    GDAL_LIBRARY_PATH = os.path.join(OSGEO4W_BIN, 'gdal312.dll')
+
+    # 5. Add DLL directories to the Python loader (Crucial for WinError 127)
+    if hasattr(os, 'add_dll_directory'):
+        os.add_dll_directory(OSGEO4W_BIN)
+        # Also add the apps folder where other hidden dependencies live
+        os.add_dll_directory(os.path.join(OSGEO4W_ROOT, 'apps', 'qgis', 'bin'))
+        
+    SPATIALITE_LIBRARY_PATH = os.path.join(OSGEO4W_ROOT, 'bin', 'mod_spatialite.dll')
+
+        
 load_dotenv()
 AI_API_KEY = os.getenv("AI_API_KEY")
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
@@ -26,7 +52,7 @@ SECRET_KEY = 'django-insecure-uax7k!b(mx03n%6#qj&8#%_$yenh*3rn&6fz88o!n78@ke%q^5
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Add this near the top or bottom of settings.py
 AUTH_USER_MODEL = 'accounts.User'
@@ -51,9 +77,20 @@ INSTALLED_APPS = [
     'tourism',
     'itinerary',
     'adminpanel',
+    'leaflet',
 ]
 
 SITE_ID = 1
+
+LEAFLET_CONFIG = {
+    'DEFAULT_CENTER': (27.3314, 88.6138), # Default to Gangtok, Sikkim
+    'DEFAULT_ZOOM': 10,
+    'MIN_ZOOM': 5,
+    'MAX_ZOOM': 18,
+    'TILES': 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    'ATTRIBUTION_PREFIX': 'Sikkim Tourism AI Platform',
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -74,6 +111,7 @@ LANGUAGE_COOKIE_NAME = 'django_language'
 LANGUAGE_COOKIE_AGE = 31536000 # 1 year persistence
 
 ROOT_URLCONF = 'core.urls'
+
 
 TEMPLATES = [
     {
@@ -100,7 +138,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # --- DATABASE ---
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
@@ -145,7 +183,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'harisaiparasa@gmail.com'
-EMAIL_HOST_PASSWORD = 'khgp mkjf acds qchk'
+EMAIL_HOST_PASSWORD = 'khgpmkjfacdsqchk'
 
 # --- MISC ---
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

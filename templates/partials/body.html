@@ -1,0 +1,10 @@
+{% load i18n %}
+{% if page_type == 'map' %}
+    {% include "partials/map_body.html" %}
+{% elif page_type == 'itinerary' %}
+    {% include "partials/planner_body.html" %}
+{% elif page_type == 'ai_lens' %}
+    {% include "partials/lens_body.html" %}
+{% elif page_type == 'categories' %}
+    {% include "partials/category_body.html" %}
+{% endif %}

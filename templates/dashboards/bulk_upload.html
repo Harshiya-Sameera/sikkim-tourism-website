@@ -1,0 +1,47 @@
+{% extends 'base1.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-12 px-4">
+    <div class="bg-white rounded-3xl shadow-xl p-8 border border-amber-100">
+        <h2 class="logo-font text-3xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+            <i class="fa-solid fa-file-import text-red-700"></i> {% translate "Bulk Upload Places" %}
+        </h2>
+
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8 text-sm text-blue-800">
+            <p class="font-bold mb-2">Instructions:</p>
+            <ul class="list-disc ml-5 space-y-1">
+                <li>Upload a <strong>.json</strong> file containing an array of place objects.</li>
+                <li>Ensure fields like <code>name</code>, <code>category</code>, <code>lat</code>, and <code>lng</code> are included.</li>
+            </ul>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            <div class="border-2 border-dashed border-gray-300 rounded-2xl p-10 text-center hover:border-red-700 transition-colors bg-gray-50">
+                <input type="file" name="json_file" id="json_file" accept=".json" class="hidden" required>
+                <label for="json_file" class="cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-up text-5xl text-gray-400 mb-4 block"></i>
+                    <span class="text-gray-700 font-bold">Click to select JSON file</span>
+                    <p id="file-name" class="text-xs text-red-700 mt-2 font-black uppercase"></p>
+                </label>
+            </div>
+
+            <div class="flex gap-4">
+                <button type="submit" class="btn-glow flex-1 text-white py-4 rounded-xl text-xs font-black uppercase tracking-widest">
+                    Start Bulk Import
+                </button>
+                <a href="{% url 'admin_dashboard' %}" class="px-8 py-4 bg-gray-100 text-gray-600 rounded-xl text-xs font-black uppercase tracking-widest text-center">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('json_file').onchange = function() {
+        document.getElementById('file-name').textContent = "Selected: " + this.files[0].name;
+    };
+</script>
+{% endblock %}

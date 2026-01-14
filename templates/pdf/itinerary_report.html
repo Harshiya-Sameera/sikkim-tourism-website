@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Helvetica'; color: #333; }
+        .header { text-align: center; color: #D32F2F; border-bottom: 2px solid #FFB800; }
+        .day-title { color: #D32F2F; font-size: 18px; margin-top: 20px; }
+        .activity-card { padding: 10px; border-left: 3px solid #FFB800; margin-bottom: 10px; }
+        .time { font-weight: bold; color: #777; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Sikkim Sacred Journey</h1>
+        <p>Itinerary for {{ user.email }}</p>
+    </div>
+
+    {% for item in plan %}
+        <div class="activity-card">
+            <div class="time">{{ item.time }} - {{ item.location }}</div>
+            <div class="activity"><strong>{{ item.activity }}</strong></div>
+        </div>
+    {% endfor %}
+</body>
+</html>

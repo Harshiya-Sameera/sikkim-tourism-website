@@ -1,97 +1,141 @@
 {% extends 'base2.html' %}
 {% load i18n %}
 
-{% block dashboard_content %}
-<div class="animate-in fade-in slide-in-from-bottom-4 duration-700">
-    <div class="mb-10">
-        <h2 class="logo-font text-3xl font-black text-red-800 uppercase tracking-tight">{% translate "Explorer" %} <span class="text-amber-500">{% translate "Hub" %}</span></h2>
-        <p class="text-gray-400 text-[10px] font-bold uppercase tracking-[0.3em]">{% translate "Your Sikkim Journey At A Glance" %}</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-amber-100 flex items-center gap-4">
-            <div class="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center text-red-700">
-                <i class="fa-solid fa-route text-xl"></i>
-            </div>
-            <div>
-                <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{% translate "Saved Plans" %}</p>
-                <h4 class="text-xl font-bold text-gray-800">{{ plan_count|default:"0" }}</h4>
-            </div>
+{% block content %}
+    {% block dashboard_content %}
+    <div class="animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div class="mb-10">
+            <h2 class="logo-font text-3xl font-black text-red-800 uppercase tracking-tight">
+                {% translate "Explorer" %} <span class="text-amber-500">{% translate "Hub" %}</span>
+            </h2>
+            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-[0.3em]">
+                {% translate "Your Sikkim Journey At A Glance" %}
+            </p>
         </div>
 
-        <a href="{% url 'ai_lens' %}" class="bg-white p-6 rounded-[2rem] shadow-sm border border-amber-100 flex items-center gap-4 hover:shadow-md transition-all group">
-            <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-all">
-                <i class="fa-solid fa-camera-retro text-xl"></i>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-amber-100 flex items-center gap-4">
+                <div class="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center text-red-700">
+                    <i class="fa-solid fa-route text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{% translate "Saved Plans" %}</p>
+                    <h4 class="text-xl font-bold text-gray-800">{{ plan_count|default:"0" }}</h4>
+                </div>
             </div>
-            <div>
-                <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{% translate "AI Lens" %}</p>
-                <h4 class="text-xs font-bold text-gray-800 group-hover:text-red-700">{% translate "Identify Landmark" %}</h4>
-            </div>
-        </a>
+            <a href="{% url 'ai_lens' %}" class="bg-white p-6 rounded-[2rem] shadow-sm border border-amber-100 flex items-center gap-4 hover:shadow-md transition-all group">
+                <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-all">
+                    <i class="fa-solid fa-camera-retro text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{% translate "AI Lens" %}</p>
+                    <h4 class="text-xs font-bold text-gray-800 group-hover:text-red-700">{% translate "Identify Landmark" %}</h4>
+                </div>
+            </a>
 
-        <a href="{% url 'chatbot:chat_home' %}" class="bg-white p-6 rounded-[2rem] shadow-sm border border-amber-100 flex items-center gap-4 hover:shadow-md transition-all group">
-            <div class="w-12 h-12 bg-red-700 rounded-2xl flex items-center justify-center text-white">
-                <i class="fa-solid fa-om text-xl animate-pulse"></i>
-            </div>
-            <div>
-                <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{% translate "AI Guide" %}</p>
-                <h4 class="text-xs font-bold text-gray-800 group-hover:text-red-700">{% translate "Ask Virtual Monk" %}</h4>
-            </div>
-        </a>
+            <a href="{% url 'chatbot:chat_home' %}" class="bg-white p-6 rounded-[2rem] shadow-sm border border-amber-100 flex items-center gap-4 hover:shadow-md transition-all group">
+                <div class="w-12 h-12 bg-red-700 rounded-2xl flex items-center justify-center text-white">
+                    <i class="fa-solid fa-om text-xl animate-pulse"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{% translate "AI Guide" %}</p>
+                    <h4 class="text-xs font-bold text-gray-800 group-hover:text-red-700">{% translate "Ask Virtual Monk" %}</h4>
+                </div>
+            </a>
 
-        <a href="{% url 'interactive_map' %}" class="bg-white p-6 rounded-[2rem] shadow-sm border border-amber-100 flex items-center gap-4 hover:shadow-md transition-all group">
-            <div class="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 group-hover:bg-orange-500 group-hover:text-white transition-all">
-                <i class="fa-solid fa-map-location-dot text-xl"></i>
-            </div>
-            <div>
-                <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{% translate "Map" %}</p>
-                <h4 class="text-xs font-bold text-gray-800 group-hover:text-red-700">{% translate "Explore Geometry" %}</h4>
-            </div>
-        </a>
-    </div>
+            <a href="{% url 'interactive_map' %}" class="bg-white p-6 rounded-[2rem] shadow-sm border border-amber-100 flex items-center gap-4 hover:shadow-md transition-all group">
+                <div class="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 group-hover:bg-orange-500 group-hover:text-white transition-all">
+                    <i class="fa-solid fa-map-location-dot text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{% translate "Map" %}</p>
+                    <h4 class="text-xs font-bold text-gray-800 group-hover:text-red-700">{% translate "Explore Geometry" %}</h4>
+                </div>
+            </a>
+        </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div class="lg:col-span-2 bg-white p-8 rounded-[2.5rem] shadow-sm border border-amber-100">
-            <div class="flex justify-between items-center mb-8">
-                <h3 class="font-black text-gray-800 uppercase text-xs tracking-widest">{% translate "Your Recent Trip Plans" %}</h3>
-                <a href="{% url 'itinerary' %}" class="text-[10px] font-black text-red-700 uppercase border-b-2 border-red-700/20">{% translate "Create New +" %}</a>
-            </div>
-            
-            {% if plans %}
-                <div class="space-y-4">
-                {% for plan in plans %}
-                    <div class="p-5 bg-gray-50 rounded-3xl border border-gray-100 flex justify-between items-center hover:bg-amber-50/50 transition-colors">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm text-red-700 font-bold text-xs">{{ forloop.counter }}</div>
-                            <div>
-                                <p class="font-bold text-gray-800 text-sm">{% translate "Sikkim Expedition" %}</p>
-                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ plan.days }} {% translate "Days" %} | {{ plan.created_at|date:"d M Y" }}</p>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 bg-white p-8 rounded-[2.5rem] shadow-sm border border-amber-100">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="font-black text-gray-800 uppercase text-xs tracking-widest">{% translate "Your Recent Trip Plans" %}</h3>
+                    <a href="{% url 'itinerary' %}" class="text-[10px] font-black text-red-700 uppercase border-b-2 border-red-700/20">{% translate "Create New +" %}</a>
+                </div>
+                
+                {% if plans %}
+                    <div class="space-y-4">
+                    {% for plan in plans %}
+                        <a href="{% url 'view_plan' plan.id %}" class="p-5 bg-gray-50 rounded-3xl border border-gray-100 flex justify-between items-center hover:bg-amber-50/50 hover:border-amber-200 transition-all group">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm text-red-700 font-bold text-xs group-hover:bg-red-700 group-hover:text-white transition-colors">{{ forloop.counter }}</div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-sm">{% translate "Sikkim Expedition" %}</p>
+                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ plan.days }} {% translate "Days" %} | {{ plan.created_at|date:"d M Y" }}</p>
+                                </div>
                             </div>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-gray-300"></i>
+                            <i class="fa-solid fa-arrow-right-long text-gray-300 group-hover:text-red-700 group-hover:translate-x-1 transition-all"></i>
+                        </a>
+                    {% endfor %}
                     </div>
-                {% endfor %}
-                </div>
-            {% else %}
-                <div class="text-center py-10 opacity-50">
-                    <i class="fa-solid fa-mountain-sun text-4xl mb-4 text-amber-200"></i>
-                    <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">{% translate "No plans found yet" %}</p>
-                </div>
-            {% endif %}
-        </div>
+                {% else %}
+                    <div class="border-2 border-dashed border-gray-100 rounded-3xl p-10 text-center">
+                        <i class="fa-solid fa-map-marked-alt text-3xl text-gray-200 mb-3"></i>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{% translate "No saved itineraries yet" %}</p>
+                        <a href="{% url 'itinerary' %}" class="inline-block mt-4 text-[9px] font-black bg-red-50 text-red-700 px-4 py-2 rounded-full uppercase">{% translate "Start Planning" %}</a>
+                    </div>
+                {% endif %}
+            </div>
 
-        <div class="space-y-6">
-            <div class="bg-red-800 p-8 rounded-[2.5rem] shadow-xl text-white">
-                <h4 class="font-black uppercase text-[10px] tracking-widest mb-6 text-amber-400">{% translate "Services Directory" %}</h4>
-                <div class="flex flex-wrap gap-2">
-                    <span class="px-4 py-2 bg-white/10 rounded-full text-[9px] font-black uppercase hover:bg-amber-500 hover:text-white cursor-pointer transition-all border border-white/5">{% translate "Hotel Booking" %}</span>
-                    <span class="px-4 py-2 bg-white/10 rounded-full text-[9px] font-black uppercase hover:bg-amber-500 hover:text-white cursor-pointer transition-all border border-white/5">{% translate "Permit Portal" %}</span>
-                    <span class="px-4 py-2 bg-white/10 rounded-full text-[9px] font-black uppercase hover:bg-amber-500 hover:text-white cursor-pointer transition-all border border-white/5">{% translate "Local Guides" %}</span>
-                    <span class="px-4 py-2 bg-white/10 rounded-full text-[9px] font-black uppercase hover:bg-amber-500 hover:text-white cursor-pointer transition-all border border-white/5">{% translate "Cab Services" %}</span>
-                    <span class="px-4 py-2 bg-white/10 rounded-full text-[9px] font-black uppercase hover:bg-amber-500 hover:text-white cursor-pointer transition-all border border-white/5">{% translate "Monastery Timings" %}</span>
+            <div class="space-y-6">
+                <div class="bg-red-800 p-8 rounded-[2.5rem] shadow-xl text-white">
+                    <h4 class="font-black uppercase text-[10px] tracking-widest mb-6 text-amber-400">{% translate "Services Directory" %}</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-4 py-2 bg-white/10 rounded-full text-[9px] font-black uppercase border border-white/5">{% translate "Hotel Booking" %}</span>
+                        <span class="px-4 py-2 bg-white/10 rounded-full text-[9px] font-black uppercase border border-white/5">{% translate "Permit Portal" %}</span>
+                        <span class="px-4 py-2 bg-white/10 rounded-full text-[9px] font-black uppercase border border-white/5">{% translate "Local Guides" %}</span>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <div class="mt-12">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="logo-font text-xl font-black text-gray-800 uppercase">
+                    <i class="fa-solid fa-heart text-red-700 mr-2"></i> {% translate "My Sacred Geography" %}
+                </h3>
+                <span class="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-full uppercase">
+                    {{ saved_count|default:"0" }} {% translate "Places Saved" %}
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for item in saved_places %}
+                <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-amber-100 group hover:shadow-md transition-all">
+                    <div class="h-32 relative">
+                        <img src="{{ item.place.image_main.url }}" class="w-full h-full object-cover">
+                        <a href="{% url 'toggle_save_place' item.place.id %}" class="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-red-700 hover:bg-red-700 hover:text-white transition-all shadow-sm">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </a>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-bold text-gray-800 text-sm mb-1">{{ item.place.name }}</h4>
+                        <p class="text-[9px] text-amber-600 font-black uppercase tracking-widest mb-3">{{ item.place.location_name }}</p>
+                        <a href="{% url 'place_detail' item.place.id %}" class="text-[9px] font-black text-red-700 uppercase tracking-widest border-b-2 border-red-700/20 hover:border-red-700 transition-all">
+                            {% translate "View Details" %}
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                {% for i in "123" %}
+                <div class="bg-gray-50/30 border-2 border-dashed border-gray-100 rounded-3xl p-8 flex flex-col items-center justify-center text-center">
+                    <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center mb-3">
+                        <i class="fa-solid fa-mountain text-gray-200"></i>
+                    </div>
+                    <p class="text-[8px] font-black text-gray-300 uppercase tracking-widest">{% translate "Empty Slot" %}</p>
+                </div>
+                {% endfor %}
+                {% endfor %}
+            </div>
+        </div>  
     </div>
-</div>
+    {% endblock %}
 {% endblock %}

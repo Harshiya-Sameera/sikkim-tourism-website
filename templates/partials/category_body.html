@@ -1,0 +1,56 @@
+{% load i18n %}
+
+{% block category_body %}
+<section class="py-16 cultural-bg min-h-screen animate-in fade-in duration-700">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="logo-font text-4xl font-bold text-red-800 mb-4">
+                {% translate "Explore by" %} <span class="text-amber-500">{% translate "Category" %}</span>
+            </h2>
+            <div class="h-1 w-24 bg-amber-400 mx-auto rounded-full"></div>
+            <p class="mt-4 text-gray-600 font-medium tracking-wide uppercase text-xs">
+                {% translate "Filter your journey through the mystic lands of Sikkim" %}
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for cat in categories %}
+            <div class="group relative overflow-hidden rounded-[2.5rem] bg-white border border-amber-100 shadow-lg hover:shadow-2xl transition-all duration-500 p-8">
+                <div class="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+                    <i class="fa-solid fa-om text-8xl text-red-900"></i>
+                </div>
+
+                <div class="relative z-10 flex flex-col h-full">
+                    <div class="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center mb-6 border border-amber-100">
+                        {% if cat.name == 'Monasteries' %}
+                            <i class="fa-solid fa-temple text-3xl text-red-700"></i>
+                        {% elif cat.name == 'Lakes' %}
+                            <i class="fa-solid fa-water text-3xl text-blue-600"></i>
+                        {% else %}
+                            <i class="fa-solid fa-mountain-sun text-3xl text-amber-600"></i>
+                        {% endif %}
+                    </div>
+
+                    <h3 class="logo-font text-2xl font-bold text-gray-800 mb-3">{{ cat.name }}</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-8">
+                        {{ cat.description|default:"Explore our curated selection of curated Sikkim destinations." }}
+                    </p>
+
+                    <div class="mt-auto">
+                        <a href="{% url 'explore' %}?category={{ cat.name }}" 
+                           class="inline-flex items-center gap-2 text-red-700 font-black text-[10px] uppercase tracking-[0.2em] group-hover:gap-4 transition-all">
+                            {% translate "View all places" %} <i class="fa-solid fa-arrow-right-long"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full py-20 text-center">
+                <i class="fa-solid fa-dharmachakra text-5xl text-gray-200 mb-4"></i>
+                <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">{% translate "No categories initialized yet." %}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

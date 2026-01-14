@@ -1,0 +1,52 @@
+{% extends 'base2.html' %}
+{% load i18n %}
+{% block content %}
+
+{% block dashboard_content %}
+<div class="p-10 bg-white rounded-[3rem] shadow-xl border border-amber-50 animate-in fade-in duration-700">
+    <div class="flex justify-between items-center mb-10">
+        <div>
+            <h2 class="logo-font text-3xl font-black text-red-800 uppercase tracking-tight">{% translate "Content Manager" %}</h2>
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{% translate "Database of Sikkim's Sacred Sites" %}</p>
+        </div>
+        <a href="/admin/tourism/touristplace/add/" class="bg-red-700 hover:bg-red-800 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all shadow-lg">
+            <i class="fa-solid fa-plus mr-2"></i> {% translate "Add New Site" %}
+        </a>
+    </div>
+
+    <div class="overflow-hidden rounded-[2rem] border border-gray-100 shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-orange-50/30 border-b border-amber-50">
+                    <th class="p-6 text-[10px] font-black text-gray-400 uppercase">{% translate "Site Name" %}</th>
+                    <th class="p-6 text-[10px] font-black text-gray-400 uppercase">{% translate "Category" %}</th>
+                    <th class="p-6 text-[10px] font-black text-gray-400 uppercase">{% translate "Status" %}</th>
+                    <th class="p-6 text-[10px] font-black text-gray-400 uppercase text-right">{% translate "Actions" %}</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                {% for place in places %}
+                <tr class="hover:bg-amber-50/10 transition-colors group">
+                    <td class="p-6 font-bold text-gray-700">{{ place.name }}</td>
+                    <td class="p-6"><span class="text-[10px] font-black text-amber-600 bg-amber-50 px-3 py-1 rounded-full uppercase">{{ place.category.name }}</span></td>
+                    <td class="p-6 text-[10px] font-black text-green-600 uppercase">{% translate "Live" %}</td>
+                    
+                    <td class="p-6 text-right flex justify-end gap-2">
+                        <a href="/admin/tourism/touristplace/{{ place.id }}/change/" class="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:bg-amber-100 hover:text-amber-700 flex items-center justify-center transition-all">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <form action="{% url 'delete_place' place.pk %}" method="POST" onsubmit="return confirm('{% translate 'Remove this site from database?' %}')">
+                            {% csrf_token %}
+                            <button type="submit" class="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:bg-red-100 hover:text-red-700 flex items-center justify-center transition-all">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+{% endblock %}

@@ -12,6 +12,23 @@
             </p>
         </div>
         
+        {% if messages %}
+        {% for message in messages %}
+        <div id="alert-box"
+            class="bg-red-50 border border-red-200 p-4 rounded-2xl mb-6 flex justify-between items-center animate-in slide-in-from-top duration-300">
+            <p class="text-xs font-bold text-red-700 uppercase tracking-widest">
+                <i class="fa-solid fa-circle-info mr-2"></i> {{ message }}
+            </p>
+            <button onclick="document.getElementById('alert-box').remove()" class="text-red-400 hover:text-red-700">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <script>
+            alert("{{ message }}");
+        </script>
+        {% endfor %}
+        {% endif %}
+        
         <form class="mt-8 space-y-6" method="POST">
             {% csrf_token %}
             <div class="space-y-4">
@@ -38,4 +55,6 @@
         </form>
     </div>
 </div>
+
+
 {% endblock %}

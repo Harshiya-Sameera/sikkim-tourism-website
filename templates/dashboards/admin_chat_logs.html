@@ -1,0 +1,62 @@
+{% extends 'base2.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="p-10 bg-white rounded-[3rem] shadow-xl border border-amber-50 animate-in fade-in duration-700">
+
+    <div class="mb-10">
+        <h2 class="logo-font text-3xl font-black text-red-800 uppercase tracking-tight">
+            {% translate "AI Service Logs" %}
+        </h2>
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
+            {% translate "Monitoring Monk Assistant Interactions" %}
+        </p>
+    </div>
+
+    <div class="space-y-4">
+        {% for log in logs %}
+        <div class="p-6 rounded-3xl border border-gray-100 bg-gray-50/30 flex justify-between items-start gap-6">
+
+            <div class="flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-[9px] font-black text-white bg-red-700 px-2 py-0.5 rounded-md uppercase tracking-tighter">
+                        {% if log.user %}
+                            {{ log.user.email }}
+                        {% else %}
+                            ANONYMOUS
+                        {% endif %}
+                    </span>
+
+                    <span class="text-[9px] font-bold text-gray-400 italic">
+                        {{ log.timestamp|timesince }} ago
+                    </span>
+                </div>
+
+                <p class="text-xs font-bold text-gray-700 leading-relaxed mb-3">
+                    “{{ log.message }}”
+                </p>
+
+                <div class="bg-white p-4 rounded-2xl border border-amber-100 text-[11px] text-gray-600 font-medium whitespace-pre-line">
+                    <span class="text-[9px] font-black text-amber-600 uppercase block mb-1">
+                        AI Monk Reply:
+                    </span>
+                    {{ log.response|truncatewords:40 }}
+                </div>
+            </div>
+
+            <div class="text-right">
+                <span class="text-[8px] font-black text-gray-300 uppercase tracking-widest">
+                    SESSION ID: #{{ log.id }}
+                </span>
+            </div>
+        </div>
+        {% empty %}
+        <div class="p-20 text-center bg-gray-50 rounded-[2rem] border-2 border-dashed border-gray-100">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                {% translate "No recent conversations logged." %}
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,5 +1,6 @@
 {% extends 'base2.html' %}
 {% load i18n %}
+{% block content %}
 
 {% block dashboard_content %}
 <div class="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
@@ -26,30 +27,29 @@
             <table class="w-full text-left">
                 <thead class="bg-gray-50 border-b border-amber-50">
                     <tr>
-                        <th class="px-10 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">{% translate "Traveler" %}</th>
-                        <th class="px-10 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">{% translate "Email Address" %}</th>
-                        <th class="px-10 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">{% translate "Access Level" %}</th>
-                        <th class="px-10 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">{% translate "Join Date" %}</th>
-                        <th class="px-10 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">{% translate "Profile Status" %}</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">{% translate "Traveler" %}</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">{% translate "Access Level" %}</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">{% translate "Join Date" %}</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">{% translate "Profile Status" %}</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">{% translate "Actions" %}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
                     {% for u in users %}
                     <tr class="hover:bg-amber-50/30 transition-all group">
-                        <td class="px-10 py-6">
+                        <td class="px-8 py-6">
                             <div class="flex items-center gap-4">
                                 <div class="w-10 h-10 bg-red-700 rounded-full flex items-center justify-center text-white font-black text-xs border-2 border-amber-100 shadow-sm">
                                     {{ u.email|first|upper }}
                                 </div>
-                                <span class="text-sm font-bold text-gray-800">{{ u.email|truncatechars:15 }}</span>
+                                <div>
+                                    <p class="text-sm font-bold text-gray-800">{{ u.email|truncatechars:25 }}</p>
+                                    <p class="text-[9px] text-gray-400 uppercase font-black tracking-tighter">UID: #{{ u.id }}</p>
+                                </div>
                             </div>
                         </td>
 
-                        <td class="px-10 py-6 text-xs font-medium text-gray-500">
-                            {{ u.email }}
-                        </td>
-
-                        <td class="px-10 py-6">
+                        <td class="px-8 py-6">
                             {% if u.is_superuser %}
                                 <span class="bg-red-50 text-red-700 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-tighter border border-red-100">
                                     <i class="fa-solid fa-user-shield mr-1"></i> {% translate "Site Admin" %}
@@ -61,16 +61,36 @@
                             {% endif %}
                         </td>
 
-                        <td class="px-10 py-6 text-xs text-gray-400 font-bold">
+                        <td class="px-8 py-6 text-xs text-gray-400 font-bold">
                             {{ u.date_joined|date:"d M, Y" }}
                         </td>
 
-                        <td class="px-10 py-6">
+                        <td class="px-8 py-6">
                             <div class="flex items-center gap-2">
                                 <div class="w-2 h-2 {% if u.is_active %}bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]{% else %}bg-gray-300{% endif %} rounded-full"></div>
                                 <span class="text-[10px] font-black uppercase {% if u.is_active %}text-green-600{% else %}text-gray-400{% endif %}">
                                     {% if u.is_active %}{% translate "Active" %}{% else %}{% translate "Suspended" %}{% endif %}
                                 </span>
+                            </div>
+                        </td>
+
+                        <td class="px-8 py-6 text-right">
+                            <div class="flex justify-end gap-2">
+                                {% if u != request.user %}
+                                    <a href="{% url 'toggle_user_status' u.id %}" 
+                                       title="{% if u.is_active %}Suspend Explorer{% else %}Activate Explorer{% endif %}"
+                                       class="w-9 h-9 rounded-xl flex items-center justify-center transition-all 
+                                              {% if u.is_active %}bg-amber-50 text-amber-600 hover:bg-amber-600 hover:text-white{% else %}bg-green-50 text-green-600 hover:bg-green-600 hover:text-white{% endif %}">
+                                        <i class="fa-solid {% if u.is_active %}fa-user-slash{% else %}fa-user-check{% endif %} text-xs"></i>
+                                    </a>
+                                    <a href="{% url 'delete_explorer' u.id %}" 
+                                       onclick="return confirm('{% translate "Permanently delete this explorer record?" %}')"
+                                       class="w-9 h-9 bg-red-50 text-red-600 rounded-xl flex items-center justify-center hover:bg-red-600 hover:text-white transition-all">
+                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                    </a>
+                                {% else %}
+                                    <span class="text-[8px] font-black text-gray-300 uppercase tracking-widest">{% translate "Current Admin" %}</span>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>
@@ -87,4 +107,5 @@
         </div>
     </div>
 </div>
+{% endblock %}
 {% endblock %}

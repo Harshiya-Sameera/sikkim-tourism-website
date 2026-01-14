@@ -1,0 +1,79 @@
+{% extends 'base2.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-4xl mx-auto py-10">
+    <div class="flex items-center justify-between mb-8">
+        <a href="{% url 'user_dashboard' %}" class="flex items-center gap-2 text-gray-400 hover:text-red-700 transition-colors group">
+            <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+            <span class="text-[10px] font-black uppercase tracking-widest">{% translate "Back to Dashboard" %}</span>
+        </a>
+        <div class="flex gap-3">
+            <button onclick="window.print()" class="p-3 bg-white border border-gray-100 rounded-2xl text-gray-500 hover:text-red-700 shadow-sm transition-all">
+                <i class="fa-solid fa-print"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-[3rem] shadow-xl border border-amber-50 overflow-hidden mb-10">
+        <div class="bg-red-800 p-10 text-white relative">
+            <div class="relative z-10">
+                <span class="bg-amber-500 text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-4 inline-block">
+                    {% translate "Sikkim Expedition" %}
+                </span>
+                <h1 class="logo-font text-4xl font-black uppercase tracking-tight mb-2">
+                    {{ plan.name|default:"My Sikkim Trip" }}
+                </h1>
+                <div class="flex items-center gap-6 opacity-80">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-day text-amber-400"></i>
+                        <span class="text-xs font-bold uppercase tracking-widest">{{ plan.days }} {% translate "Days" %}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-clock text-amber-400"></i>
+                        <span class="text-xs font-bold uppercase tracking-widest">{% translate "Created" %}: {{ plan.created_at|date:"d M Y" }}</span>
+                    </div>
+                </div>
+            </div>
+            <i class="fa-solid fa-om absolute top-1/2 right-[-20px] -translate-y-1/2 text-white/5 text-[15rem] pointer-events-none"></i>
+        </div>
+
+        <div class="p-10">
+    <div class="prose prose-red max-w-none">
+        <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-6">
+            {% translate "Detailed Daily Schedule" %}
+        </h3>
+        
+        <div class="space-y-6">
+            {% if plan.plan_data %}
+                {% for item in plan.plan_data %}
+                    <div class="flex gap-6 p-6 bg-gray-50 rounded-[2rem] border border-gray-100 hover:border-amber-200 transition-all">
+                        <div class="flex-shrink-0 w-16 h-16 bg-red-800 rounded-2xl flex flex-col items-center justify-center text-white">
+                            <span class="text-[8px] font-black uppercase">Day</span>
+                            <span class="text-xl font-bold">{{ item.day }}</span>
+                        </div>
+                        <div>
+                            <span class="text-[9px] font-black text-amber-600 uppercase tracking-widest">{{ item.time }}</span>
+                            <h4 class="font-bold text-gray-800 text-lg">{{ item.activity }}</h4>
+                            <p class="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                                <i class="fa-solid fa-location-dot"></i> {{ item.location }}
+                            </p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-gray-500 italic">{% translate "No schedule data found." %}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .nav-item, button, a { display: none !important; }
+        .bg-red-800 { background-color: #991b1b !important; -webkit-print-color-adjust: exact; }
+    }
+</style>
+{% endblock %}

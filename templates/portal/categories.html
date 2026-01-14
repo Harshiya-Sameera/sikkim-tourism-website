@@ -1,17 +1,18 @@
 {% extends user.is_authenticated|yesno:"base2.html,base1.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block content %}
-{% if user.is_authenticated %}
-    {% block dashboard_content %}
-        {% render_category_body %}
-    {% endblock %}
-{% else %}
-    {% render_category_body %}
-{% endif %}
+    {% if user.is_authenticated %}
+        {% block dashboard_content %}
+            {% include "partials/category_body.html" %}
+        {% endblock %}
+    {% else %}
+        {% include "partials/category_body.html" %}
+    {% endif %}
 {% endblock %}
 
-{% block category_body %}
+<!-- {% block category_body %}
 <section class="py-16 cultural-bg min-h-screen animate-in fade-in duration-700">
     <div class="max-w-7xl mx-auto px-4">
         <div class="text-center mb-16">
@@ -64,4 +65,4 @@
         </div>
     </div>
 </section>
-{% endblock %}
+{% endblock %} -->

@@ -1,0 +1,504 @@
+<!-- {% load i18n %}
+
+<style>
+    /* Progress Bar Animation */
+    @keyframes progress-loading {
+        0% {
+            width: 0%;
+        }
+
+        50% {
+            width: 70%;
+        }
+
+        100% {
+            width: 100%;
+        }
+    }
+
+    .animate-progress-loading {
+        animation: progress-loading 8s infinite ease-in-out;
+    }
+
+    /* Spinner Animation */
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .animate-spin-slow {
+        animation: spin 3s linear infinite;
+    }
+
+    /* Custom Button Glow for PDF */
+    .btn-pdf {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.3);
+    }
+
+    button#submit-btn.btn-glow {
+        background: #D32F2F !important;
+        /* Force the solid red color */
+        background-color: #D32F2F !important;
+        color: white !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: flex !important;
+        border: none !important;
+        /* Re-apply your glow effect if it was lost */
+        box-shadow: 0 10px 15px -3px rgba(211, 47, 47, 0.4), 0 4px 6px -2px rgba(211, 47, 47, 0.2) !important;
+    }
+
+    /* Ensure the text inside is also fully opaque */
+    #btn-text {
+        opacity: 1 !important;
+        color: white !important;
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<section class="py-12 cultural-bg min-h-screen">
+    <div class="max-w-5xl mx-auto px-4">
+
+        <div class="text-center mb-12 animate-in fade-in slide-in-from-top-5 duration-700">
+            <h2 class="logo-font text-4xl font-black text-red-800 mb-2">
+                AI <span class="text-amber-500">{% translate "Trip Planner" %}</span>
+            </h2>
+            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.3em]">{% translate "Craft your sacred
+                journey in seconds" %}</p>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] shadow-2xl border border-amber-100 p-8 md:p-12 mb-12 shadow-amber-900/5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <label class="block text-[10px] font-black uppercase text-gray-400 ml-2 tracking-widest">{% translate "Number of Days" %}</label>
+                    <select id="trip-days"
+                        class="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-amber-500 outline-none font-bold text-gray-700">
+                        <option value="1">1 {% translate "Day (Quick Tour)" %}</option>
+                        <option value="3">3 {% translate "Days (Cultural Deep Dive)" %}</option>
+                        <option value="5" selected>5 {% translate "Days (Complete Sikkim)" %}</option>
+                    </select>
+                </div>
+                <div class="space-y-4">
+                    <label class="block text-[10px] font-black uppercase text-gray-400 ml-2 tracking-widest">{% translate "Interests" %}</label>
+                    <input type="text" id="trip-interests"
+                        placeholder="{% translate 'e.g. Monasteries, Photography, Trekking' %}"
+                        class="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-amber-500 outline-none font-bold text-gray-700">
+                </div>
+            </div>
+
+            <button id="submit-btn" onclick="generatePlan()"
+                class="btn-glow w-full mt-10 py-5 rounded-2xl text-white font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3 transition-all active:scale-95">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span id="btn-text">{% translate "Generate My Itinerary" %}</span>
+            </button>
+        </div>
+
+        <div id="planner-loader" class="hidden text-center py-16 animate-in fade-in duration-500">
+            <div class="inline-block relative mb-6">
+                <i class="fa-solid fa-dharmachakra text-6xl text-amber-500 animate-spin-slow"></i>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fa-solid fa-om text-red-700 text-xl animate-pulse"></i>
+                </div>
+            </div>
+            <div class="max-w-xs mx-auto">
+                <p class="logo-font text-red-800 font-bold text-xl mb-2">{% translate "Consulting the Ancient Scrolls"
+                    %}...</p>
+                <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mb-4">
+                    <div class="h-full bg-red-700 animate-progress-loading rounded-full"></div>
+                </div>
+                <p class="text-[9px] text-gray-400 font-black uppercase tracking-widest leading-relaxed">
+                    {% translate "Our AI Monk is mapping the sacred routes of Sikkim based on your interests." %}
+                </p>
+            </div>
+        </div>
+
+        <div id="itinerary-wrapper" class="hidden">
+            <div class="flex justify-end mb-6">
+                <button onclick="downloadPDF()"
+                    class="btn-pdf px-6 py-3 rounded-xl text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:opacity-90 transition-all">
+                    <i class="fa-solid fa-file-pdf"></i> {% translate "Download PDF" %}
+                </button>
+            </div>
+            <div id="itinerary-results" class="space-y-4">
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script>
+
+    const trans = {
+        day: "{% translate 'Day' %}",
+        seeking: "{% translate 'Seeking Wisdom...' %}",
+        generate: "{% translate 'Generate My Itinerary' %}",
+        error: "{% translate 'Spiritual connection failed. Please try again later.' %}"
+    };
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    async function generatePlan() {
+        const days = document.getElementById('trip-days').value;
+        const interests = document.getElementById('trip-interests').value;
+        const loader = document.getElementById('planner-loader');
+        const resultsWrapper = document.getElementById('itinerary-wrapper');
+        const resultsContainer = document.getElementById('itinerary-results');
+        const btn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+
+        if (!interests) {
+            alert("{% translate 'Please share your interests traveler!' %}");
+            return;
+        }
+
+        loader.classList.remove('hidden');
+        resultsWrapper.classList.add('hidden');
+        resultsContainer.innerHTML = "";
+
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+        btnText.innerText = "{% translate 'Seeking Wisdom...' %}";
+
+        try {
+            const csrftoken = getCookie('csrftoken');
+
+            const res = await fetch('/itinerary/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ days, interests })
+            });
+
+
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+
+            loader.classList.add('hidden');
+            resultsWrapper.classList.remove('hidden');
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            // btnText.innerText = "{% translate "Generate My Itinerary" %}";
+            btnText.innerText = trans.generate;
+
+            let currentDay = 0;
+            let htmlContent = "";
+
+            data.plan.forEach(item => {
+                if (item.day !== currentDay) {
+                    currentDay = item.day;
+                    htmlContent += `
+                        <h3 class="logo-font text-2xl font-bold text-red-800 mt-12 mb-6 border-b-2 border-amber-400 inline-block pb-1">
+                            ${trans.day} ${currentDay}
+                        </h3>`;
+                }
+
+                htmlContent += `
+                <div class="relative pl-8 border-l-2 border-amber-100 pb-8 last:border-0">
+                    <div class="absolute -left-[9px] top-0 w-4 h-4 bg-amber-500 rounded-full border-4 border-white"></div>
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-amber-50">
+                        <div class="flex flex-col md:flex-row justify-between gap-2 mb-2">
+                            <span class="text-[10px] font-black uppercase text-red-700 tracking-widest">
+                                <i class="fa-solid fa-clock mr-1"></i> ${item.time}
+                            </span>
+                            <span class="text-[10px] font-black uppercase text-amber-600 tracking-widest">
+                                <i class="fa-solid fa-location-dot mr-1"></i> ${item.location}
+                            </span>
+                        </div>
+                        <h4 class="font-bold text-gray-800 text-lg">${item.activity}</h4>
+                    </div>
+                </div>`;
+            });
+
+            resultsContainer.innerHTML = htmlContent;
+            resultsWrapper.scrollIntoView({ behavior: 'smooth' });
+
+        } catch (e) {
+            console.error(e);
+            loader.innerHTML = `
+            <div class="p-8 bg-red-50 rounded-3xl border border-red-100 text-red-600 font-bold uppercase text-xs">
+                {% translate "Spiritual connection failed. Please try again later." %}
+            </div>`;
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            btnText.innerText = "{% translate "Generate My Itinerary" %}";
+        }
+    }
+
+    function downloadPDF() {
+        const element = document.getElementById('itinerary-results');
+        const opt = {
+            margin: 1,
+            filename: 'Sikkim_Sacred_Itinerary.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        // New Promise-based usage:
+        html2pdf().set(opt).from(element).save();
+    }
+</script> -->
+
+
+
+{% load i18n %}
+
+<style>
+    /* Progress Bar Animation */
+    @keyframes progress-loading {
+        0% { width: 0%; }
+        50% { width: 70%; }
+        100% { width: 100%; }
+    }
+    .animate-progress-loading {
+        animation: progress-loading 8s infinite ease-in-out;
+    }
+
+    /* Spinner Animation */
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    .animate-spin-slow {
+        animation: spin 3s linear infinite;
+    }
+
+    /* Custom Button Glow for PDF */
+    .btn-pdf {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.3);
+    }
+
+    button#submit-btn.btn-glow {
+        background: #D32F2F !important;
+        background-color: #D32F2F !important;
+        color: white !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: flex !important;
+        border: none !important;
+        box-shadow: 0 10px 15px -3px rgba(211, 47, 47, 0.4), 0 4px 6px -2px rgba(211, 47, 47, 0.2) !important;
+    }
+
+    #btn-text {
+        opacity: 1 !important;
+        color: white !important;
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<section class="py-12 cultural-bg min-h-screen">
+    <div class="max-w-5xl mx-auto px-4">
+
+        <div class="text-center mb-12 animate-in fade-in slide-in-from-top-5 duration-700">
+            <h2 class="logo-font text-4xl font-black text-red-800 mb-2">
+                AI <span class="text-amber-500">{% translate "Trip Planner" %}</span>
+            </h2>
+            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.3em]">{% translate "Craft your sacred journey in seconds" %}</p>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] shadow-2xl border border-amber-100 p-8 md:p-12 mb-12 shadow-amber-900/5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <label class="block text-[10px] font-black uppercase text-gray-400 ml-2 tracking-widest">{% translate "Number of Days" %}</label>
+                    <select id="trip-days"
+                        class="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-amber-500 outline-none font-bold text-gray-700">
+                        <option value="1">1 {% translate "Day (Quick Tour)" %}</option>
+                        <option value="3">3 {% translate "Days (Cultural Deep Dive)" %}</option>
+                        <option value="5" selected>5 {% translate "Days (Complete Sikkim)" %}</option>
+                    </select>
+                </div>
+                <div class="space-y-4">
+                    <label class="block text-[10px] font-black uppercase text-gray-400 ml-2 tracking-widest">{% translate "Interests" %}</label>
+                    <input type="text" id="trip-interests"
+                        placeholder="{% translate 'e.g. Monasteries, Photography, Trekking' %}"
+                        class="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-amber-500 outline-none font-bold text-gray-700">
+                </div>
+            </div>
+
+            <button id="submit-btn" onclick="generatePlan()"
+                class="btn-glow w-full mt-10 py-5 rounded-2xl text-white font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3 transition-all active:scale-95">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span id="btn-text">{% translate "Generate My Itinerary" %}</span>
+            </button>
+        </div>
+
+        <div id="planner-loader" class="hidden text-center py-16 animate-in fade-in duration-500">
+            <div class="inline-block relative mb-6">
+                <i class="fa-solid fa-dharmachakra text-6xl text-amber-500 animate-spin-slow"></i>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fa-solid fa-om text-red-700 text-xl animate-pulse"></i>
+                </div>
+            </div>
+            <div class="max-w-xs mx-auto">
+                <p class="logo-font text-red-800 font-bold text-xl mb-2">{% translate "Consulting the Ancient Scrolls" %}...</p>
+                <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mb-4">
+                    <div class="h-full bg-red-700 animate-progress-loading rounded-full"></div>
+                </div>
+                <p class="text-[9px] text-gray-400 font-black uppercase tracking-widest leading-relaxed">
+                    {% translate "Our AI Monk is mapping the sacred routes of Sikkim based on your interests." %}
+                </p>
+            </div>
+        </div>
+
+        <div id="itinerary-wrapper" class="hidden">
+            <div class="flex justify-end mb-6">
+                <button onclick="downloadPDF()"
+                    class="btn-pdf px-6 py-3 rounded-xl text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:opacity-90 transition-all">
+                    <i class="fa-solid fa-file-pdf"></i> {% translate "Download PDF" %}
+                </button>
+            </div>
+            <div id="itinerary-results" class="space-y-4"></div>
+        </div>
+    </div>
+</section>
+
+<script>
+    const trans = {
+        day: "{% translate 'Day' %}",
+        seeking: "{% translate 'Seeking Wisdom...' %}",
+        generate: "{% translate 'Generate My Itinerary' %}",
+        error_general: "{% translate 'Spiritual connection failed. Please try again later.' %}"
+    };
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    async function generatePlan() {
+        const days = document.getElementById('trip-days').value;
+        const interests = document.getElementById('trip-interests').value;
+        const loader = document.getElementById('planner-loader');
+        const resultsWrapper = document.getElementById('itinerary-wrapper');
+        const resultsContainer = document.getElementById('itinerary-results');
+        const btn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+
+        if (!interests) {
+            alert("{% translate 'Please share your interests traveler!' %}");
+            return;
+        }
+
+        // Reset UI
+        loader.classList.remove('hidden');
+        resultsWrapper.classList.add('hidden');
+        resultsContainer.innerHTML = "";
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+        btnText.innerText = trans.seeking;
+
+        try {
+            const csrftoken = getCookie('csrftoken');
+            const res = await fetch('/itinerary/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ days, interests })
+            });
+
+            const data = await res.json();
+            
+            // Handle server-side errors
+            if (!res.ok || data.error) {
+                throw new Error(data.error || trans.error_general);
+            }
+
+            loader.classList.add('hidden');
+            resultsWrapper.classList.remove('hidden');
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            btnText.innerText = trans.generate;
+
+            let currentDay = 0;
+            let htmlContent = "";
+
+            data.plan.forEach(item => {
+                if (item.day !== currentDay) {
+                    currentDay = item.day;
+                    htmlContent += `
+                        <h3 class="logo-font text-2xl font-bold text-red-800 mt-12 mb-6 border-b-2 border-amber-400 inline-block pb-1">
+                            ${trans.day} ${currentDay}
+                        </h3>`;
+                }
+
+                htmlContent += `
+                <div class="relative pl-8 border-l-2 border-amber-100 pb-8 last:border-0">
+                    <div class="absolute -left-[9px] top-0 w-4 h-4 bg-amber-500 rounded-full border-4 border-white"></div>
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-amber-50">
+                        <div class="flex flex-col md:flex-row justify-between gap-2 mb-2">
+                            <span class="text-[10px] font-black uppercase text-red-700 tracking-widest">
+                                <i class="fa-solid fa-clock mr-1"></i> ${item.time}
+                            </span>
+                            <span class="text-[10px] font-black uppercase text-amber-600 tracking-widest">
+                                <i class="fa-solid fa-location-dot mr-1"></i> ${item.location}
+                            </span>
+                        </div>
+                        <h4 class="font-bold text-gray-800 text-lg">${item.activity}</h4>
+                    </div>
+                </div>`;
+            });
+
+            resultsContainer.innerHTML = htmlContent;
+            resultsWrapper.scrollIntoView({ behavior: 'smooth' });
+
+        } catch (e) {
+            console.error("ITINERARY FETCH ERROR:", e);
+            loader.classList.remove('hidden');
+            loader.innerHTML = `
+                <div class="p-8 bg-red-50 rounded-3xl border border-red-100 text-red-600 font-bold uppercase text-[10px]">
+                    <i class="fa-solid fa-circle-exclamation mr-2"></i> ${e.message}
+                </div>`;
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            btnText.innerText = trans.generate;
+        }
+    }
+
+    function downloadPDF() {
+        const element = document.getElementById('itinerary-results');
+        const opt = {
+            margin: 1,
+            filename: 'Sikkim_Sacred_Itinerary.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
+    }
+</script>

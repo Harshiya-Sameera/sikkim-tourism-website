@@ -1,0 +1,39 @@
+[
+  {"name": "Rumtek Monastery", "category": "Monasteries", "location_name": "Gangtok", "description": "Seat of the Kagyu lineage.", "history": "16th Karmapa's center.", "lat": 27.278, "lng": 88.601, "timings": "9-6", "entry_fee": 20},
+  {"name": "Pemayangtse Monastery", "category": "Monasteries", "location_name": "Pelling", "description": "Ancient Nyingma center.", "history": "Built in 1705.", "lat": 27.293, "lng": 88.236, "timings": "9-5", "entry_fee": 20},
+  {"name": "Enchey Monastery", "category": "Monasteries", "location_name": "Gangtok", "description": "The Solitary Temple.", "history": "Blessed by Lama Drupthob Karpo.", "lat": 27.344, "lng": 88.619, "timings": "9-6", "entry_fee": 0},
+  {"name": "Tashiding Monastery", "category": "Monasteries", "location_name": "West Sikkim", "description": "Known for the Bhumchu ceremony.", "history": "Built on a site where a rainbow settled.", "lat": 27.321, "lng": 88.305, "timings": "9-5", "entry_fee": 0},
+  {"name": "Phensang Monastery", "category": "Monasteries", "location_name": "North Sikkim", "description": "Nyingmapa order.", "history": "Founded in 1721.", "lat": 27.410, "lng": 88.600, "timings": "9-5", "entry_fee": 0},
+  {"name": "Phodong Monastery", "category": "Monasteries", "location_name": "North Sikkim", "description": "Kagyu sect center.", "history": "Rebuilt in the 18th century.", "lat": 27.390, "lng": 88.610, "timings": "9-5", "entry_fee": 0},
+  {"name": "Ralang Monastery", "category": "Monasteries", "location_name": "Ravangla", "description": "Home to 100+ monks.", "history": "Built to celebrate 4th Chogyal's pilgrimage.", "lat": 27.310, "lng": 88.380, "timings": "8-5", "entry_fee": 0},
+  {"name": "Dubdi Monastery", "category": "Monasteries", "location_name": "Yuksom", "description": "The Hermit's Cell.", "history": "Oldest monastery in Sikkim (1701).", "lat": 27.380, "lng": 88.220, "timings": "9-4", "entry_fee": 0}
+]
+
+[
+  {"name": "Tsomgo Lake", "category": "Lakes", "location_name": "East Sikkim", "description": "Glacial lake.", "history": "Predictions made by color changes.", "lat": 27.374, "lng": 88.761, "timings": "8-3", "entry_fee": 0},
+  {"name": "Gurudongmar Lake", "category": "Lakes", "location_name": "North Sikkim", "description": "Highest lake.", "history": "Blessed by Guru Rinpoche.", "lat": 28.016, "lng": 88.709, "timings": "7-1", "entry_fee": 0},
+  {"name": "Khecheopalri Lake", "category": "Lakes", "location_name": "Pelling", "description": "The Wishing Lake.", "history": "Leaves are picked up by birds instantly.", "lat": 27.340, "lng": 88.190, "timings": "8-6", "entry_fee": 10},
+  {"name": "Kathok Lake", "category": "Lakes", "location_name": "Yuksom", "description": "Purifying water.", "history": "Used for coronation ceremonies.", "lat": 27.370, "lng": 88.225, "timings": "24/7", "entry_fee": 0},
+  {"name": "Green Lake", "category": "Lakes", "location_name": "Lachen", "description": "Trekker's paradise.", "history": "Base for Kanchenjunga expeditions.", "lat": 27.750, "lng": 88.250, "timings": "Permit required", "entry_fee": 500}
+]
+
+[
+  {"name": "Tashi Viewpoint", "category": "Viewpoints", "location_name": "Gangtok", "description": "Panoramic sunrise views of Kanchenjunga.", "history": "Built by King Tashi Namgyal.", "lat": 27.359, "lng": 88.613, "timings": "5 AM - 6 PM", "entry_fee": 10},
+  {"name": "Ganesh Tok", "category": "Viewpoints", "location_name": "Gangtok", "description": "Small temple with a bird's eye view of the city.", "history": "Dedicated to Lord Ganesha.", "lat": 27.348, "lng": 88.622, "timings": "6 AM - 7 PM", "entry_fee": 0},
+  {"name": "Hanuman Tok", "category": "Viewpoints", "location_name": "Gangtok", "description": "High-altitude temple maintained by the Indian Army.", "history": "Legend says Lord Hanuman rested here.", "lat": 27.351, "lng": 88.635, "timings": "6 AM - 6 PM", "entry_fee": 0},
+  {"name": "Sangay Falls", "category": "Viewpoints", "location_name": "Pelling", "description": "A powerful waterfall near Rimbi.", "history": "A natural landmark on the way to Khecheopalri.", "lat": 27.310, "lng": 88.200, "timings": "24/7", "entry_fee": 0},
+  {"name": "Chenrezig Statue", "category": "Viewpoints", "location_name": "Pelling", "description": "The tallest Chenrezig statue in the world.", "history": "Part of the Skywalk project completed in 2018.", "lat": 27.300, "lng": 88.240, "timings": "9 AM - 6 PM", "entry_fee": 50}
+]
+[
+  {"name": "Nathu La Pass", "category": "Adventure", "location_name": "Indo-China Border", "description": "Historic Silk Road pass.", "history": "Closed in 1962 and reopened in 2006.", "lat": 27.386, "lng": 88.831, "timings": "Wed-Sun (Permit Only)", "entry_fee": 200},
+  {"name": "Yumthang Valley", "category": "Adventure", "location_name": "Lachung", "description": "The Valley of Flowers of the East.", "history": "Known for the Shingba Rhododendron Sanctuary.", "lat": 27.826, "lng": 88.696, "timings": "8 AM - 4 PM", "entry_fee": 0},
+  {"name": "Zero Point", "category": "Adventure", "location_name": "Yumesamdong", "description": "Where the road ends and snow begins.", "history": "The civilian limit near the Chinese border.", "lat": 27.910, "lng": 88.750, "timings": "7 AM - 12 PM", "entry_fee": 0},
+  {"name": "Zuluk", "category": "Adventure", "location_name": "Old Silk Route", "description": "Famous for its 32 hairpin turns.", "history": "An ancient transit point to Tibet.", "lat": 27.250, "lng": 88.780, "timings": "24/7", "entry_fee": 0},
+  {"name": "Baba Mandir", "category": "Adventure", "location_name": "East Sikkim", "description": "Shrine built for an Indian soldier.", "history": "Dedicated to Sepoy Harbhajan Singh.", "lat": 27.360, "lng": 88.810, "timings": "8 AM - 4 PM", "entry_fee": 0}
+]
+[
+  {"name": "Buddha Park", "category": "Culture", "location_name": "Ravangla", "description": "Features a 130ft high Buddha statue.", "history": "Inaugurated by the 14th Dalai Lama in 2013.", "lat": 27.307, "lng": 88.363, "timings": "9 AM - 6 PM", "entry_fee": 50},
+  {"name": "Chardham", "category": "Culture", "location_name": "Namchi", "description": "Replicas of the four most revered Hindu Char Dhams.", "history": "Built by the State Government to promote pilgrimage.", "lat": 27.160, "lng": 88.350, "timings": "8 AM - 8 PM", "entry_fee": 50},
+  {"name": "Samdruptse Hill", "category": "Culture", "location_name": "Namchi", "description": "The 'Wish Fulfilling Hill' with a massive Guru Rinpoche statue.", "history": "Foundation laid by Dalai Lama in 1997.", "lat": 27.180, "lng": 88.360, "timings": "9 AM - 5 PM", "entry_fee": 30},
+  {"name": "Bakthang Waterfall", "category": "Culture", "location_name": "Gangtok", "description": "A scenic falls near the North Sikkim Highway.", "history": "A popular photography spot for tourists.", "lat": 27.365, "lng": 88.618, "timings": "8 AM - 6 PM", "entry_fee": 10}
+]

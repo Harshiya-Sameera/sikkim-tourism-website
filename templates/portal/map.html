@@ -3,93 +3,11 @@
 {% load static %}
 
 {% block content %}
-{% if user.is_authenticated %}
-    {% block dashboard_content %}
-        {% render_map_body %}
-    {% endblock %}
-{% else %}
-    {% render_map_body %}
-{% endif %}
-{% endblock %}
-
-{% block map_body %}
-<section class="h-[85vh] relative overflow-hidden animate-in fade-in duration-700">
-    <div id="google-map" class="w-full h-full grayscale-[20%]"></div>
-
-    <div class="absolute top-6 left-6 z-10 hidden md:block">
-        <div class="bg-white/90 backdrop-blur-md p-8 rounded-[2.5rem] border border-amber-100 shadow-2xl max-w-xs shadow-amber-900/10">
-            <h3 class="logo-font text-red-800 text-xl font-black mb-2 uppercase tracking-tighter">
-                {% translate "Sacred Geography" %}
-            </h3>
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-relaxed mb-6">
-                {% translate "Explore the precise locations of Sikkim's ancient monasteries and hidden wonders." %}
-            </p>
-            <div class="pt-4 border-t border-amber-50">
-                <div class="flex items-center gap-3 text-[10px] font-black text-gray-700 uppercase tracking-widest">
-                    <i class="fa-solid fa-dharmachakra text-red-700 animate-spin-slow"></i>
-                    <span>{{ places.count }} {% translate "Sites Mapped" %}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-
-
-<script>
-    function initMap() {
-        // Center coordinates for Sikkim
-        const sikkimCenter = { lat: 27.3314, lng: 88.6138 };
-        
-        const map = new google.maps.Map(document.getElementById("google-map"), {
-            zoom: 9,
-            center: sikkimCenter,
-            // Customizable via Google Cloud Console
-            mapId: "YOUR_MAP_ID_OPTIONAL", 
-            disableDefaultUI: false,
-            zoomControl: true,
-            // Custom Monastic Theme styling (Optional grayscale/monochrome)
-            styles: [
-                { "featureType": "poi", "stylers": [{ "visibility": "off" }] },
-                { "featureType": "transit", "stylers": [{ "visibility": "off" }] }
-            ]
-        });
-
-        const infoWindow = new google.maps.InfoWindow();
-
-        // Dynamically render markers from your 150+ Sikkim database
-        {% for place in places %}
-        const marker{{ place.id }} = new google.maps.Marker({
-            position: { lat: {{ place.latitude }}, lng: {{ place.longitude }} },
-            map: map,
-            title: "{{ place.name }}",
-            icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                fillColor: "#D32F2F", // Saffron Red
-                fillOpacity: 1,
-                strokeColor: "#FFB800", // Monastic Gold
-                strokeWeight: 2,
-                scale: 9
-            }
-        });
-
-        marker{{ place.id }}.addListener("click", () => {
-            const contentString = `
-                <div class="p-3">
-                    <h4 class="font-black text-red-800 text-sm uppercase mb-1">${"{{ place.name }}"}</h4>
-                    <p class="text-[9px] font-bold text-amber-600 mb-3 uppercase tracking-tighter">${"{{ place.location_name }}"}</p>
-                    <a href="{% url 'place_detail' place.id %}" 
-                       class="text-[9px] font-black uppercase text-white bg-red-800 px-4 py-2 rounded-xl inline-block shadow-lg hover:bg-red-700 transition-all">
-                        {% translate "View Details" %}
-                    </a>
-                </div>
-            `;
-            infoWindow.setContent(contentString);
-            infoWindow.open(map, marker{{ place.id }});
-        });
-        {% endfor %}
-    }
-</script>
-
-<script async src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_key }}&callback=initMap"></script>
+    {% if user.is_authenticated %}
+        {% block dashboard_content %}
+            {% include "partials/map_body.html" %}
+        {% endblock %}
+    {% else %}
+        {% include "partials/map_body.html" %}
+    {% endif %}
 {% endblock %}

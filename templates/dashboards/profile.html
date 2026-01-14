@@ -1,6 +1,8 @@
 {% extends 'base2.html' %}
 {% load i18n %}
 
+{% block content %}
+
 {% block dashboard_content %}
 <div class="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
     <div class="mb-10">
@@ -24,15 +26,15 @@
                             class="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl text-gray-400 font-bold text-sm cursor-not-allowed">
                     </div>
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{% translate "Email Address" %}</label>
-                        <input type="email" value="{{ user.email }}" 
-                            class="w-full bg-white border border-amber-200 p-4 rounded-2xl text-gray-700 font-bold text-sm focus:ring-4 focus:ring-red-700/10 focus:border-red-700 outline-none transition-all">
-                    </div>
+    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{% translate "Account Identity" %}</label>
+    <input type="text" value="{{ user.email }}" disabled 
+           class="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl text-gray-400 font-bold text-sm cursor-not-allowed">
+</div>
                 </div>
 
                 <div class="pt-6">
-                    <button type="submit" class="btn-glow text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-lg">
-                        {% translate "Update Profile" %}
+                    <button type="submit" class="btn-glow text-black px-10 py-4 bg-red-500 border border-red-200 border-dotted rounded-full hover:bg-red-300 font-black uppercase tracking-widest text-xs transition-all shadow-lg">
+                      Update Profile
                     </button>
                 </div>
             </form>
@@ -61,16 +63,6 @@
                             </span> 
                             <i class="fa-solid fa-chevron-down text-[8px] text-gray-400 group-hover:text-red-700"></i>
                         </button>
-                        
-                        <div id="lang-dropdown" class="hidden absolute right-0 mt-2 w-36 rounded-xl bg-white border border-amber-200 shadow-xl z-[60] overflow-hidden">
-                            <form action="{% url 'set_language' %}" method="post">
-                                {% csrf_token %}
-                                <input name="next" type="hidden" value="/">
-                                <button name="language" value="en" type="submit" class="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-600 hover:bg-amber-50 hover:text-red-700 border-b border-gray-100">ENGLISH</button>
-                                <button name="language" value="hi" type="submit" class="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-600 hover:bg-amber-50 hover:text-red-700 border-b border-gray-100">HINDI</button>
-                                <button name="language" value="te" type="submit" class="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-600 hover:bg-amber-50 hover:text-red-700">TELUGU</button>
-                            </form>
-                        </div>
                     </div>
                 </div>
 
@@ -99,4 +91,5 @@
         }
     }
 </script>
+{% endblock %}
 {% endblock %}

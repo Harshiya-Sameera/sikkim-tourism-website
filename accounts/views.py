@@ -12,23 +12,33 @@ User = get_user_model()
 
 def login_view(request):
     if request.method == 'POST':
-        email = request.POST.get('username') # Form input field name is 'username'
+        email = request.POST.get('username') # The field name in your HTML
         password = request.POST.get('password')
+        
+        # Check if user exists first to provide a specific 'Inactive' message
+        user_exists = User.objects.filter(email=email).first()
+        
         user = authenticate(request, email=email, password=password)
 
         if user is not None:
-            if user.role == 'admin' and not user.is_approved:
+            # Check for admin approval if applicable
+            if hasattr(user, 'role') and user.role == 'admin' and not getattr(user, 'is_approved', True):
                 messages.error(request, 'Admin account pending approval.')
                 return render(request, 'accounts/login.html')
             
             login(request, user)
-            user.login_count += 1
+            user.login_count = getattr(user, 'login_count', 0) + 1
             user.save()
             return redirect_user_dashboard(user)
         else:
-            messages.error(request, 'Invalid email or password.')
+            # If authentication failed, check if it was because the user is inactive
+            if user_exists and not user_exists.is_active:
+                messages.error(request, 'Please verify your email/OTP first.')
+            else:
+                messages.error(request, 'Invalid email or password.')
             
     return render(request, 'accounts/login.html')
+# accounts/views.py
 
 def signup_view(request):
     if request.method == 'POST':
@@ -37,8 +47,8 @@ def signup_view(request):
         role = request.POST.get('role', 'tourist')
 
         if User.objects.filter(email=email).exists():
-            messages.error(request, 'Email already registered.')
-            return redirect('signup')
+            messages.info(request, 'User already exists! Please login instead.')
+            return redirect('login') # Changed to login for better UX
 
         user = User.objects.create_user(email=email, password=password, role=role, is_active=False)
         otp = str(random.randint(100000, 999999))
@@ -50,11 +60,17 @@ def signup_view(request):
                 f'Your Verification Code is: {otp}',
                 settings.EMAIL_HOST_USER,
                 [email],
+                fail_silently=False, 
             )
             request.session['verify_user'] = user.id
-            return redirect('verify_otp')
-        except Exception:
-            messages.error(request, 'Error sending verification email.')
+            # This redirect uses the name 'verify_otp' from your urls.py
+            return redirect('verify_otp') 
+            
+        except Exception as e:
+            # If email fails, delete the inactive user so they can try again
+            user.delete() 
+            messages.error(request, f'Error sending verification email: {str(e)}')
+            return render(request, 'accounts/signup.html') # Return here to stop execution
 
     return render(request, 'accounts/signup.html')
 
