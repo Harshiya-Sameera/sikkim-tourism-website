@@ -3,150 +3,186 @@
 {% load i18n %}
 
 {% block content %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+    .cultural-bg { background-color: #fdfcf8; }
+    .btn-glow { background: #D32F2F; box-shadow: 0 10px 20px -5px rgba(211, 47, 47, 0.4); }
+    .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+</style>
 
 <section class="py-12 cultural-bg animate-in fade-in duration-700">
     <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-12">
 
         <div class="lg:col-span-2 space-y-8">
-            <div class="rounded-3xl overflow-hidden shadow-2xl relative h-96 border-4 border-white">
+            
+            <div class="rounded-3xl overflow-hidden shadow-2xl relative h-[450px] border-4 border-white">
                 {% if place.image_main %}
-                    <img src="{{ place.image_main.url }}"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <img src="{{ place.image_main.url }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                 {% else %}
                     <div class="w-full h-full flex items-center justify-center bg-amber-50 text-amber-600">
                         <i class="fa-solid fa-mountain-sun text-5xl opacity-70"></i>
                     </div>
                 {% endif %}
-                <div class="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/90 to-transparent">
-                    <span
-                        class="bg-amber-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-2 inline-block">
+
+                <div class="absolute bottom-0 left-0 w-full p-10 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
+                    <span class="bg-amber-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-3 inline-block shadow-lg">
                         {{ place.category.name }}
                     </span>
-                    <h1 class="logo-font text-4xl text-white font-bold drop-shadow-md">{{ place.name }}</h1>
+                    <h1 class="logo-font text-5xl text-white font-bold drop-shadow-2xl">{{ place.name }}</h1>
+                    <div class="flex items-center gap-4 mt-3 text-amber-400 text-sm font-bold uppercase tracking-widest">
+                        <span><i class="fa-solid fa-location-dot"></i> {{ place.location_name }}</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="bg-white p-10 rounded-3xl shadow-sm border border-amber-100">
-                <h3
-                    class="text-red-800 font-bold text-xl mb-4 uppercase tracking-tighter border-b border-amber-50 pb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-scroll text-amber-500"></i> Sacred History & Description
+            <div class="bg-white p-10 rounded-[2.5rem] shadow-sm border border-amber-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-8 opacity-5">
+                    <i class="fa-solid fa-om text-9xl text-red-800"></i>
+                </div>
+                
+                <h3 class="text-red-800 font-bold text-xl mb-6 uppercase tracking-tighter border-b border-amber-50 pb-3 flex items-center gap-3">
+                    <i class="fa-solid fa-scroll text-amber-500"></i> {% translate "Sacred History & Description" %}
                 </h3>
-                <p class="text-gray-700 leading-relaxed mb-6 font-medium">{{ place.description }}</p>
-                <div class="bg-amber-50/50 p-6 rounded-2xl border-l-4 border-red-700">
-                    <p class="italic text-gray-600 font-semibold">"{{ place.history }}"</p>
-                </div>
-            </div>
-        </div>
+                
+                <p class="text-gray-700 leading-relaxed text-lg mb-8 font-medium">
+                    {{ place.description }}
+                </p>
 
-        <div class="space-y-6">
-            <div class="bg-red-800 text-white p-8 rounded-3xl shadow-xl border-b-4 border-amber-500">
-                <h4 class="font-bold text-lg mb-6 flex items-center gap-2 uppercase tracking-widest">
-                    <i class="fa-solid fa-circle-info text-amber-400"></i> Visitor Info
-                </h4>
-                <ul class="space-y-4 text-xs font-bold uppercase tracking-widest">
-                    <li class="flex justify-between border-b border-red-700/50 pb-2 text-red-100">
-                        <span>Timings:</span>
-                        <span class="text-amber-400">{{ place.timings }}</span>
-                    </li>
-                    <li class="flex justify-between border-b border-red-700/50 pb-2 text-red-100">
-                        <span>Entry Fee:</span>
-                        <span class="text-amber-400">₹{{ place.entry_fee }}</span>
-                    </li>
-                    <li class="flex flex-col gap-2 text-red-100">
-                        <span>Access Route:</span>
-                        <span class="text-white font-medium normal-case tracking-normal leading-relaxed italic">
-                            {{ place.how_to_reach }}</span>
-                    </li>
-                </ul>
-                {% if user.is_authenticated %}
-                <button id="save-place-btn" 
-                        data-id="{{ place.id }}"
-                        class="w-full mt-8 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all
-                        {% if is_saved %}bg-amber-600 text-white{% else %}btn-glow text-white{% endif %}">
-                    {% if is_saved %}
-                        <i class="fa-solid fa-check mr-2"></i> Saved to Trip
-                    {% else %}
-                        <i class="fa-solid fa-bookmark mr-2"></i> Add to Trip Planner
-                    {% endif %}
-                </button>
-                {% else %}
-                <a href="{% url 'login' %}?next={{ request.path }}"
-                    class="btn-glow w-full mt-8 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest text-center block bg-red-800 text-white">
-                    {% translate "Login to Add to Planner" %}
-                </a>
+                {% if place.history %}
+                <div class="bg-amber-50/50 p-8 rounded-3xl border-l-8 border-red-700 relative shadow-inner">
+                    <i class="fa-solid fa-quote-left text-amber-200 text-4xl absolute top-4 left-4 opacity-50"></i>
+                    <p class="italic text-gray-600 font-semibold text-lg relative z-10 pl-4">
+                        "{{ place.history }}"
+                    </p>
+                </div>
                 {% endif %}
             </div>
 
-            <div
-                class="rounded-3xl overflow-hidden h-64 shadow-md border-4 border-white grayscale hover:grayscale-0 transition-all duration-500">
-                <div id="detail-map" class="w-full h-full"></div>
+            {% if nearby_spots %}
+            <div class="space-y-6">
+                <h3 class="text-gray-800 font-black text-xs uppercase tracking-[0.3em] ml-2">
+                    {% translate "Nearby Sacred Geography" %}
+                </h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    {% for spot in nearby_spots %}
+                    <a href="{% url 'place_detail' spot.id %}" class="bg-white p-6 rounded-3xl border border-amber-50 shadow-sm hover:shadow-xl hover:border-amber-200 transition-all group">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-bold text-gray-800 group-hover:text-red-700 transition-colors">{{ spot.name }}</h4>
+                                <p class="text-[10px] text-amber-600 font-black uppercase tracking-widest mt-1">{{ spot.category.name }}</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-300 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
             </div>
+            {% endif %}
+        </div>
+
+
+        <div class="space-y-8">
+
+            <div class="bg-red-800 text-white p-8 rounded-[2.5rem] shadow-2xl border-b-8 border-amber-500 relative overflow-hidden">
+                <div class="relative z-10">
+                    <h4 class="font-bold text-sm mb-6 flex items-center gap-3 uppercase tracking-[0.2em]">
+                        <i class="fa-solid fa-circle-info text-amber-400"></i> {% translate "Travel Wisdom" %}
+                    </h4>
+                    
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center border-b border-white/10 pb-3">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-red-200">{% translate "Timings" %}</span>
+                            <span class="text-xs font-bold">{{ place.timings|default:"6:00 AM - 6:00 PM" }}</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-white/10 pb-3">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-red-200">{% translate "Entry Fee" %}</span>
+                            <span class="text-xs font-bold text-amber-400">
+                                {% if place.entry_fee %}₹{{ place.entry_fee }}{% else %}Free Entry{% endif %}
+                            </span>
+                        </div>
+                        <div class="space-y-2">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-red-200">{% translate "Access Route" %}</span>
+                            <p class="text-xs leading-relaxed italic text-white/90">{{ place.how_to_reach|truncatewords:20 }}</p>
+                        </div>
+                    </div>
+
+                    {% if user.is_authenticated %}
+                    <button id="save-place-btn" data-id="{{ place.id }}" 
+                            class="w-full mt-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-lg 
+                            {% if is_saved %}bg-amber-500 text-white{% else %}bg-white text-red-800 hover:bg-amber-50{% endif %}">
+                        {% if is_saved %}<i class="fa-solid fa-check mr-2"></i> Saved{% else %}<i class="fa-solid fa-bookmark mr-2"></i> Add to Planner{% endif %}
+                    </button>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="w-full mt-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest bg-white text-red-800 inline-block text-center shadow-lg">
+                        Login to Save
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="bg-white rounded-[2.5rem] shadow-sm border-4 border-white overflow-hidden h-72 shadow-xl ring-1 ring-amber-100">
+                <div id="detail-map" class="h-full w-full"></div>
+            </div>
+
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-amber-50">
+                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-bed text-red-700"></i> {% translate "Nearby Stays" %}
+                </h3>
+                <ul class="space-y-4">
+                    {% for hotel in nearby_hotels %}
+                        <li class="flex items-center gap-3 p-3 rounded-2xl hover:bg-amber-50 transition-all cursor-pointer border border-transparent hover:border-amber-100">
+                            <div class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-700 font-bold text-[10px]">
+                                {{ forloop.counter }}
+                            </div>
+                            <span class="text-sm font-bold text-gray-700">{{ hotel }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
         </div>
     </div>
 </section>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        {% if place.location %}
-            var lat = {{ place.location.y }};
-            var lng = {{ place.location.x }};
-            var placeName = "{{ place.name }}";
-
-            var detailMap = L.map('detail-map', {
-                zoomControl: true, // Enabled zoom controls for better UX
-                dragging: true,     // Allowed dragging so users can explore surroundings
-                scrollWheelZoom: false
-            }).setView([lat, lng], 14);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(detailMap);
-
-            // Create the marker
-            var marker = L.circleMarker([lat, lng], {
-                radius: 10,
-                fillColor: "#D32F2F",
-                color: "#FFB800",
-                weight: 3,
-                opacity: 1,
-                fillOpacity: 0.8
-            }).addTo(detailMap);
-
-            // ADD THIS: Dynamic Popup with external link
-            marker.bindPopup(`
-                <div class="text-center p-1">
-                    <b class="text-red-800 uppercase block mb-2">${placeName}</b>
-                    <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}"                       
-                    target="_blank" 
-                       class="bg-amber-500 text-white text-[9px] px-3 py-1 rounded-full font-black uppercase no-underline shadow-sm hover:bg-amber-600">
-                       Open in Google Maps
-                    </a>
-                </div>
-            `).openPopup(); // Open by default so the user sees it immediately
-        {% endif %}
-    });
-
-    document.getElementById('save-place-btn').addEventListener('click', async function() {
-    const btn = this;
-    const placeId = btn.getAttribute('data-id');
-    
-    try {
-        const response = await fetch(`/itinerary/save/${placeId}/`, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': '{{ csrf_token }}' }
-        });
-        const data = await response.json();
+document.addEventListener('DOMContentLoaded', function () {
+    {% if place.location %}
+        var lat = {{ place.location.y }};
+        var lng = {{ place.location.x }};
+        var map = L.map('detail-map', { zoomControl: false }).setView([lat, lng], 14);
         
-        if (data.action === 'added') {
-            btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Saved to Trip';
-            btn.className = "w-full mt-8 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest bg-amber-600 text-white";
-        } else {
-            btn.innerHTML = '<i class="fa-solid fa-bookmark mr-2"></i> Add to Trip Planner';
-            btn.className = "btn-glow w-full mt-8 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest text-white";
-        }
-    } catch (e) {
-        console.error("Save failed", e);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        
+        var customIcon = L.divIcon({
+            className: 'custom-div-icon',
+            html: "<div style='background-color:#D32F2F; width:12px; height:12px; border:3px solid #FFB800; border-radius:50%; box-shadow:0 0 10px rgba(0,0,0,0.3);'></div>",
+            iconSize: [12, 12],
+            iconAnchor: [6, 6]
+        });
+
+        L.marker([lat, lng], {icon: customIcon}).addTo(map)
+            .bindPopup("<b class='logo-font text-red-800'>{{ place.name }}</b>").openPopup();
+    {% endif %}
+
+    // Save Logic
+    const saveBtn = document.getElementById('save-place-btn');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', async function () {
+            const res = await fetch(`/itinerary/save/${this.dataset.id}/`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': '{{ csrf_token }}' }
+            });
+            const data = await res.json();
+            if (data.action === 'added') {
+                this.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Saved';
+                this.className = "w-full mt-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-lg bg-amber-500 text-white";
+            } else {
+                this.innerHTML = '<i class="fa-solid fa-bookmark mr-2"></i> Add to Planner';
+                this.className = "w-full mt-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-lg bg-white text-red-800";
+            }
+        });
     }
 });
-
 </script>
 {% endblock %}

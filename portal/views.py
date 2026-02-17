@@ -348,42 +348,36 @@ def toggle_save_place(request, place_id):
     messages.success(request, message)
     return redirect('place_detail', pk=place_id)
 
-# ============================================================
-# EXPLORE
-# ============================================================
 def explore_view(request):
-    # 1. Get parameters from the URL
     lat = request.GET.get('lat')
     lng = request.GET.get('lng')
     query = request.GET.get('q')
     category_name = request.GET.get('category')
     
-    # 2. Start with all places
     places = TouristPlace.objects.all()
 
-    # 3. Apply Category Filter (New)
-    if category_name:
-        # Filter by the category name using the relationship
+    if category_name and category_name != "All":
         places = places.filter(category__name=category_name)
-
-    # 4. Apply Text Search
     if query:
         places = places.filter(name__icontains=query)
 
-    # 5. Geolocation / Proximity Logic
     if lat and lng:
         try:
+            # Correct order: Longitude (lng) FIRST, then Latitude (lat)
             user_location = Point(float(lng), float(lat), srid=4326)
-            # Annotate with distance and order by proximity
-            places = places.annotate(
-                distance=Distance('location', user_location)
-            ).order_by('distance')
-        except ValueError:
-            pass
 
-    # 6. Pass data to the template
+            # Annotate with 'dist_obj' to match your template logic
+            places = places.annotate(
+                dist_obj=Distance('location', user_location)
+            ).order_by('dist_obj')
+
+        except (ValueError, TypeError, Exception):
+            places = places.order_by('-view_count')
+    else:
+        places = places.order_by('-view_count')
+
     context = {
         'places': places, 
-        'categories': Category.objects.all(), # For the filter buttons
+        'categories': Category.objects.all(),
     }
     return render(request, 'portal/explore.html', context)

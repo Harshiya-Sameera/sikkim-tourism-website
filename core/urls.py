@@ -19,7 +19,6 @@ urlpatterns = [
     # Optional clean alias (UI-friendly)
     path('explore/', tourism_views.ExplorePlacesView.as_view(), name='explore'),
     path('categories/', portal_views.categories_view, name='categories'),
-    path('map/', portal_views.map_view, name='interactive_map'),
     path('recognition/', portal_views.api_extract_image, name='ai_lens_api'),
     path('ai-lens/', portal_views.ai_lens_view, name='ai_lens'),
     path('itinerary/', portal_views.itinerary_view, name='itinerary'),

@@ -19,3 +19,10 @@ class TouristPlaceAdmin(LeafletGeoAdmin):  # CHANGED: Inherit from LeafletGeoAdm
         'DEFAULT_CENTER': (27.3314, 88.6138),  # Sikkim coordinates
         'DEFAULT_ZOOM': 10,
     }
+
+from .models import Hotel
+from django.contrib.gis.admin import GISModelAdmin
+
+@admin.register(Hotel)
+class HotelAdmin(GISModelAdmin):
+    list_display = ('name', 'address')

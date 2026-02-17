@@ -321,26 +321,47 @@
         </div>
 
         <div class="bg-white rounded-[2.5rem] shadow-2xl border border-amber-100 p-8 md:p-12 mb-12 shadow-amber-900/5">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="space-y-2">
                     <label class="block text-[10px] font-black uppercase text-gray-400 ml-2 tracking-widest">{% translate "Number of Days" %}</label>
-                    <select id="trip-days"
-                        class="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-amber-500 outline-none font-bold text-gray-700">
-                        <option value="1">1 {% translate "Day (Quick Tour)" %}</option>
-                        <option value="3">3 {% translate "Days (Cultural Deep Dive)" %}</option>
-                        <option value="5" selected>5 {% translate "Days (Complete Sikkim)" %}</option>
+                    <select id="trip-days" class="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-amber-500 outline-none font-bold text-gray-700">
+                        <option value="1">1 {% translate "Day" %}</option>
+                        <option value="3">3 {% translate "Days" %}</option>
+                        <option value="5" selected>5 {% translate "Days" %}</option>
                     </select>
                 </div>
-                <div class="space-y-4">
-                    <label class="block text-[10px] font-black uppercase text-gray-400 ml-2 tracking-widest">{% translate "Interests" %}</label>
-                    <input type="text" id="trip-interests"
-                        placeholder="{% translate 'e.g. Monasteries, Photography, Trekking' %}"
-                        class="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-amber-500 outline-none font-bold text-gray-700">
+
+                <div class="space-y-2">
+                    <label class="block text-[10px] font-black uppercase text-gray-400 ml-2 tracking-widest">{% translate "Travelers" %}</label>
+                    <input type="number" id="trip-travelers" min="1" value="1" class="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-amber-500 outline-none font-bold text-gray-700">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-[10px] font-black uppercase text-gray-400 ml-2 tracking-widest">{% translate "Preferred Weather" %}</label>
+                    <select id="trip-weather" class="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-amber-500 outline-none font-bold text-gray-700">
+                        <option value="sunny">{% translate "Sunny" %}</option>
+                        <option value="cool">{% translate "Cool/Chilly" %}</option>
+                        <option value="misty">{% translate "Misty/Romantic" %}</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2 lg:col-span-1">
+                    <label class="block text-[10px] font-black uppercase text-gray-400 ml-2 tracking-widest">{% translate "Primary Focus" %}</label>
+                    <select id="trip-category" class="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-amber-500 outline-none font-bold text-gray-700">
+                        <option value="monasteries">{% translate "Monasteries & Culture" %}</option>
+                        <option value="adventure">{% translate "Adventure & Trekking" %}</option>
+                        <option value="nature">{% translate "Nature & Wildlife" %}</option>
+                        <option value="sightseeing">{% translate "General Sightseeing" %}</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2 lg:col-span-2">
+                    <label class="block text-[10px] font-black uppercase text-gray-400 ml-2 tracking-widest">{% translate "Specific Interests" %}</label>
+                    <input type="text" id="trip-interests" placeholder="{% translate 'e.g. Photography, Meditation, Local Food' %}" class="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-amber-500 outline-none font-bold text-gray-700">
                 </div>
             </div>
 
-            <button id="submit-btn" onclick="generatePlan()"
-                class="btn-glow w-full mt-10 py-5 rounded-2xl text-white font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3 transition-all active:scale-95">
+            <button id="submit-btn" onclick="generatePlan()" class="btn-glow w-full mt-10 py-5 rounded-2xl text-white font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3 transition-all active:scale-95">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                 <span id="btn-text">{% translate "Generate My Itinerary" %}</span>
             </button>
@@ -400,20 +421,27 @@
     }
 
     async function generatePlan() {
+        // 1. Capture all enhanced inputs
         const days = document.getElementById('trip-days').value;
+        const travelers = document.getElementById('trip-travelers').value; // NEW
+        const weather = document.getElementById('trip-weather').value;     // NEW
+        const category = document.getElementById('trip-category').value;   // NEW
         const interests = document.getElementById('trip-interests').value;
+        
+        // UI Elements
         const loader = document.getElementById('planner-loader');
         const resultsWrapper = document.getElementById('itinerary-wrapper');
         const resultsContainer = document.getElementById('itinerary-results');
         const btn = document.getElementById('submit-btn');
         const btnText = document.getElementById('btn-text');
 
+        // Validation
         if (!interests) {
             alert("{% translate 'Please share your interests traveler!' %}");
             return;
         }
 
-        // Reset UI
+        // Reset UI State
         loader.classList.remove('hidden');
         resultsWrapper.classList.add('hidden');
         resultsContainer.innerHTML = "";
@@ -423,22 +451,30 @@
 
         try {
             const csrftoken = getCookie('csrftoken');
+
+            // 2. Fetch with all new data points
             const res = await fetch('/itinerary/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrftoken
                 },
-                body: JSON.stringify({ days, interests })
+                body: JSON.stringify({ 
+                    days, 
+                    travelers, 
+                    weather, 
+                    category, 
+                    interests 
+                })
             });
 
             const data = await res.json();
             
-            // Handle server-side errors
             if (!res.ok || data.error) {
                 throw new Error(data.error || trans.error_general);
             }
 
+            // Success: Clear loader and show results
             loader.classList.add('hidden');
             resultsWrapper.classList.remove('hidden');
             btn.disabled = false;
@@ -448,6 +484,7 @@
             let currentDay = 0;
             let htmlContent = "";
 
+            // Render loop
             data.plan.forEach(item => {
                 if (item.day !== currentDay) {
                     currentDay = item.day;
@@ -489,7 +526,6 @@
             btnText.innerText = trans.generate;
         }
     }
-
     function downloadPDF() {
         const element = document.getElementById('itinerary-results');
         const opt = {

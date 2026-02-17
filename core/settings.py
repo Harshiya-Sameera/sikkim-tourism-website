@@ -188,3 +188,4 @@ EMAIL_HOST_PASSWORD = 'khgpmkjfacdsqchk'
 # --- MISC ---
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # AI_API_KEY = "AIzaSyA1XC2smURg6PX8LVboTssMV2zYPvILKCk"
+OPENWEATHERMAP_API_KEY = os.environ.get("OPENWEATHERMAP_API_KEY", "")

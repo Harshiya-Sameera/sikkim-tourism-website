@@ -12,6 +12,7 @@
         </div>
 
         <div class="bg-white rounded-[3rem] shadow-2xl border border-amber-100 p-8 md:p-16 text-center">
+            
             <div id="drop-zone" class="border-4 border-dashed border-amber-100 rounded-[2rem] p-12 hover:border-red-700 transition-all cursor-pointer bg-gray-50/50 group">
                 <input type="file" id="file-input" class="hidden" accept="image/*">
                 
@@ -28,7 +29,11 @@
 
             <div id="result-card" class="hidden mt-10 p-8 bg-amber-50 rounded-3xl border border-amber-200 animate-in zoom-in-95">
                 <p class="text-[10px] font-black text-red-700 uppercase mb-2 tracking-widest">{% translate "Identification Success" %}</p>
-                <h3 id="detected-name" class="logo-font text-2xl font-bold text-gray-800 mb-6"></h3>
+                
+                <a id="detected-link" href="#" class="block group mb-6">
+                    <h3 id="detected-name" class="logo-font text-2xl font-bold text-gray-800 group-hover:text-red-700 transition-colors"></h3>
+                </a>
+
                 <a id="view-details" href="#" class="btn-glow text-white px-10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest inline-block shadow-lg">
                     {% translate "Explore Heritage Details" %}
                 </a>
@@ -52,6 +57,9 @@
     const previewContainer = document.getElementById('preview-container');
     const uploadPrompt = document.getElementById('upload-prompt');
     const imagePreview = document.getElementById('image-preview');
+    const detectedName = document.getElementById('detected-name');
+    const detectedLink = document.getElementById('detected-link');
+    const viewDetails = document.getElementById('view-details');
 
     zone.onclick = () => input.click();
 
@@ -59,14 +67,13 @@
         const file = e.target.files[0];
         if(!file) return;
 
-        // 1. Show Preview immediately
+        // UI Reset and Preview
         imagePreview.src = URL.createObjectURL(file);
         previewContainer.classList.remove('hidden');
         uploadPrompt.classList.add('hidden');
         loader.classList.remove('hidden');
         resultCard.classList.add('hidden');
 
-        // 2. Convert to Base64 (Matching your working Chatbot logic)
         const reader = new FileReader();
         reader.onloadend = async () => {
             const base64String = reader.result.split(',')[1];
@@ -85,18 +92,20 @@
                 });
 
                 const data = await res.json();
-                
-                // Stop the loader
                 loader.classList.add('hidden');
 
                 if(data.places && data.places.length > 0) {
-                    // Success: Found a matching monastery in your TouristPlace models
                     const bestMatch = data.places[0];
+                    const detailUrl = `/tourism/place/${bestMatch.id}/`;
+
+                    // Update UI with Detection Data
+                    detectedName.innerText = bestMatch.name;
+                    detectedLink.href = detailUrl;
+                    viewDetails.href = detailUrl;
+                    
                     resultCard.classList.remove('hidden');
-                    document.getElementById('detected-name').innerText = bestMatch.name;
-                    document.getElementById('view-details').href = `/tourism/place/${bestMatch.id}/`;
                 } else {
-                    // Partial Success: AI knows what it is, but it's not in your database
+                    // Fallback if not in database
                     loader.classList.remove('hidden');
                     loader.innerHTML = `
                         <div class="p-6 bg-amber-50 rounded-2xl border border-amber-200 shadow-inner">
