@@ -35,6 +35,28 @@
                 </button>
             </form>
         </div>
+                {% if weather %}
+        <div class="mb-8 p-6 bg-white rounded-2xl shadow border border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-black uppercase tracking-widest text-gray-400">
+                        Current Weather - {{ weather.city }}
+                    </p>
+                    <p class="text-3xl font-bold text-gray-800">
+                        {{ weather.temp }}°C
+                    </p>
+                    <p class="text-sm text-gray-600 capitalize">
+                        {{ weather.desc }}
+                    </p>
+                    <p class="text-xs text-gray-500">
+                        Humidity: {{ weather.humidity }}%
+                    </p>
+                </div>
+                <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="weather icon">
+            </div>
+        </div>
+        {% endif %}
+
 
         <div class="flex flex-wrap gap-3 mb-12">
             <a href="{% url 'explore_places' %}" 
@@ -55,13 +77,40 @@
             {% for place in places %}
             <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-amber-50 group hover:shadow-2xl hover:border-amber-200 transition-all duration-500">
                 <div class="relative h-56 overflow-hidden">
-                    {% if place.image_main %}
-                        <img src="{{ place.image_main.url }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                    {% else %}
-                        <div class="w-full h-full flex items-center justify-center bg-amber-50 text-amber-600"><i class="fa-solid fa-mountain-sun text-5xl opacity-70"></i></div>
+
+                    <!-- WEATHER BADGE (Top Right) -->
+                    {% if place.weather %}
+                    <div class="absolute top-4 right-4 bg-yellow-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1 z-20">
+                        <img src="https://openweathermap.org/img/wn/{{ place.weather.icon }}.png"
+                            class="w-4 h-4">
+                        {{ place.weather.temp }}°C
+                    </div>
                     {% endif %}
-                    <div class="absolute top-4 left-4"><span class="bg-red-700 text-white text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest">{{ place.category.name }}</span></div>
+
+                    <!-- CATEGORY BADGE (Top Left) -->
+                    <div class="absolute top-4 left-4 z-20">
+                        <span class="bg-red-700 text-white text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest">
+                            {{ place.category.name }}
+                        </span>
+                    </div>
+
+                    <!-- LOCATION BADGE (Below Weather) -->
+                    <div class="absolute top-14 right-4 z-20">
+                        <span class="bg-black/60 text-white text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest backdrop-blur-sm">
+                            <i class="fa-solid fa-location-dot mr-1"></i>
+                            {{ place.location_name }}
+                        </span>
+                    </div>
+
+                    <!-- IMAGE -->
+                    {% if place.image_main %}
+                        <img src="{{ place.image_main.url }}"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    {% endif %}
+
                 </div>
+
+
             
                 <div class="p-8">
                     <h3 class="logo-font text-xl font-bold text-gray-800 mb-1">{{ place.name }}</h3>
@@ -83,8 +132,8 @@
                                 {% translate "Distance" %}
                             </p>
                             <p class="text-sm font-bold text-gray-700">
-                                {% if place.dist_obj %}
-                                    {{ place.dist_obj.km|floatformat:1 }} km
+                                {% if place.distance_km is not None %}
+                                    {{ place.distance_km }} km
                                 {% else %}
                                     <span class="text-[10px] text-gray-400">-- km</span>
                                 {% endif %}

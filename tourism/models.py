@@ -6,7 +6,7 @@ from django.conf import settings
 class Hotel(models.Model):
     name = models.CharField(max_length=200)
     address = models.TextField()
-    location = gis_models.PointField()
+    location = gis_models.PointField(srid=4326, null=True, blank=True)
     contact_number = models.CharField(max_length=20, blank=True, null=True)
     price_range = models.CharField(max_length=100, blank=True, null=True)
 
@@ -40,7 +40,11 @@ class TouristPlace(models.Model):
     image_main = models.ImageField(upload_to='places/main/')
     timings = models.CharField(max_length=100)
     entry_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    location = gis_models.PointField(srid=4326, null=True, blank=True)
+    location = gis_models.PointField(
+        srid=4326,
+        null=True,
+        blank=True
+    )
     location_name = models.CharField(max_length=255)
     how_to_reach = models.TextField()
     best_time_to_visit = models.CharField(max_length=200)

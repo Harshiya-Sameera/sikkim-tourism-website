@@ -1,5 +1,6 @@
 import json
 import base64
+import math
 from urllib import request
 
 from google import genai
@@ -14,10 +15,23 @@ from django.db.models import Count
 from django.core.serializers import serialize
 
 from django.contrib.gis.geos import Point
-from django.contrib.gis.db.models.functions import Distance
 
 from itinerary.models import Itinerary
 from tourism.models import TouristPlace, Category, SavedPlace
+
+def haversine(lat1, lon1, lat2, lon2):
+    R = 6371  # Earth radius in km
+    phi1 = math.radians(lat1)
+    phi2 = math.radians(lat2)
+    delta_phi = math.radians(lat2 - lat1)
+    delta_lambda = math.radians(lon2 - lon1)
+
+    a = math.sin(delta_phi / 2) ** 2 + \
+        math.cos(phi1) * math.cos(phi2) * \
+        math.sin(delta_lambda / 2) ** 2
+
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    return R * c
 
 # ============================================================
 # GEMINI CONFIGURATION (ONLY ONE – CORRECT)
@@ -353,31 +367,55 @@ def explore_view(request):
     lng = request.GET.get('lng')
     query = request.GET.get('q')
     category_name = request.GET.get('category')
-    
+
     places = TouristPlace.objects.all()
 
     if category_name and category_name != "All":
         places = places.filter(category__name=category_name)
+
     if query:
         places = places.filter(name__icontains=query)
 
+    # -------- DISTANCE LOGIC (SQLITE SAFE) --------
     if lat and lng:
         try:
-            # Correct order: Longitude (lng) FIRST, then Latitude (lat)
-            user_location = Point(float(lng), float(lat), srid=4326)
+            user_lat = float(lat)
+            user_lng = float(lng)
 
-            # Annotate with 'dist_obj' to match your template logic
-            places = places.annotate(
-                dist_obj=Distance('location', user_location)
-            ).order_by('dist_obj')
+            place_list = []
 
-        except (ValueError, TypeError, Exception):
+            for place in places:
+                if place.location:
+                    place_lat = place.location.y
+                    place_lng = place.location.x
+
+                    distance_km = haversine(
+                        user_lat,
+                        user_lng,
+                        place_lat,
+                        place_lng
+                    )
+
+                    place.distance_km = round(distance_km, 1)
+                else:
+                    place.distance_km = None
+
+                place_list.append(place)
+
+            # Sort by distance (None values go last)
+            place_list.sort(
+                key=lambda x: x.distance_km if x.distance_km is not None else 9999
+            )
+
+            places = place_list
+
+        except Exception:
             places = places.order_by('-view_count')
     else:
         places = places.order_by('-view_count')
 
     context = {
-        'places': places, 
+        'places': places,
         'categories': Category.objects.all(),
     }
     return render(request, 'portal/explore.html', context)

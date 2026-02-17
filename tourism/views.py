@@ -27,32 +27,49 @@ class ExplorePlacesView(ListView):
     def get_queryset(self):
         queryset = TouristPlace.objects.select_related('category').all()
 
-        # Get parameters
         query = self.request.GET.get('q')
         category_name = self.request.GET.get('category')
         lat = self.request.GET.get('lat')
         lng = self.request.GET.get('lng')
 
-        # --------------------------------------------------
-        # Text Search
-        # --------------------------------------------------
         if query:
             queryset = queryset.filter(
                 Q(name__icontains=query) |
                 Q(description__icontains=query)
             )
 
-        # --------------------------------------------------
-        # Category Filter (Safe Handling of "All")
-        # --------------------------------------------------
         if category_name and category_name != 'All':
             queryset = queryset.filter(
                 category__name__iexact=category_name
             )
 
-        # --------------------------------------------------
-        # Geo Proximity Sorting
-        # --------------------------------------------------
+        queryset = queryset.order_by('-view_count')
+
+        places = list(queryset)
+
+        # ==========================
+        # Attach weather per place
+        # ==========================
+        for place in places:
+            place.weather = None
+
+            if place.location:
+                cache_key = f'weather_place_{place.id}'
+                weather = cache.get(cache_key)
+
+                if not weather:
+                    weather = get_weather(
+                        lat=place.location.y,
+                        lon=place.location.x
+                    )
+                    if weather:
+                        cache.set(cache_key, weather, 900)  # 15 min cache
+
+                place.weather = weather
+
+        # ==========================
+        # Distance calculation
+        # ==========================
         if lat and lng:
             try:
                 lat = float(lat)
@@ -60,16 +77,29 @@ class ExplorePlacesView(ListView):
 
                 user_location = Point(lng, lat, srid=4326)
 
-                queryset = queryset.annotate(
+                queryset = TouristPlace.objects.filter(
+                    id__in=[p.id for p in places]
+                ).annotate(
                     distance=Distance('location', user_location)
-                ).order_by('distance')
+                )
+
+                distance_map = {
+                    p.id: round(p.distance.km, 1) if p.distance else None
+                    for p in queryset
+                }
+
+                for place in places:
+                    place.distance_km = distance_map.get(place.id)
 
             except (ValueError, TypeError):
-                queryset = queryset.order_by('-view_count', 'name')
+                for place in places:
+                    place.distance_km = None
         else:
-            queryset = queryset.order_by('-view_count', 'name')
+            for place in places:
+                place.distance_km = None
 
-        return queryset
+        return places
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -77,17 +107,6 @@ class ExplorePlacesView(ListView):
         context['categories'] = Category.objects.all()
         context['current_category'] = self.request.GET.get('category', 'All')
         context['search_query'] = self.request.GET.get('q', '')
-
-        # --------------------------------------------------
-        # Cached Weather (Gangtok Hub)
-        # --------------------------------------------------
-        weather_data = cache.get('sikkim_weather_gangtok')
-
-        if not weather_data:
-            weather_data = get_weather("Gangtok")
-            cache.set('sikkim_weather_gangtok', weather_data, 1800)
-
-        context['weather'] = weather_data
 
         return context
 
