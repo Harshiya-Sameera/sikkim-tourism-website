@@ -33,7 +33,7 @@ static/
 
 1. Clone the repository
 
-git clone https://github.com/yourusername/sikkim-tourism-website.git
+git clone https://github.com/Harshiya-Sameera/sikkim-tourism-website.git
 
 2. Create virtual environment
 
@@ -54,4 +54,6 @@ python manage.py runserver
 
 ## Contributors
 - Sameera
-- Team Members
+- Vyshnavi
+- Ayyappa
+- Yallamanda
