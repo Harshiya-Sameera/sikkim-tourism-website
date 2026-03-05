@@ -342,7 +342,6 @@ def bulk_upload_places(request):
 
     return render(request, 'dashboards/bulk_upload.html')
 
-
 @login_required
 def toggle_save_place(request, place_id):
     place = get_object_or_404(TouristPlace, id=place_id)

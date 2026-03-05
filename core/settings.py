@@ -3,34 +3,39 @@ from pathlib import Path
 from django.utils.translation import gettext_lazy as _
 from dotenv import load_dotenv
 
-import os
-import sys
+if os.name == "nt":
 
-if os.name == 'nt':
-    # 1. Path confirmed by your shell output
-    OSGEO4W_ROOT = r'C:\QGIS 3.44.6'
-    OSGEO4W_BIN = os.path.join(OSGEO4W_ROOT, 'bin')
-    
-    # 2. Put QGIS first in the system path to avoid conflicts
-    os.environ['PATH'] = OSGEO4W_BIN + os.pathsep + os.environ['PATH']
-    
-    # 3. GeoDjango specific variables
-    os.environ['GDAL_DATA'] = os.path.join(OSGEO4W_ROOT, 'apps', 'gdal', 'share', 'gdal')
-    os.environ['PROJ_LIB'] = os.path.join(OSGEO4W_ROOT, 'share', 'proj')
-    
-    # 4. Point to the specific DLL
-    GDAL_LIBRARY_PATH = os.path.join(OSGEO4W_BIN, 'gdal312.dll')
+    OSGEO4W_ROOT = r"C:\QGIS 3.44.7"
 
-    # 5. Add DLL directories to the Python loader (Crucial for WinError 127)
-    if hasattr(os, 'add_dll_directory'):
-        os.add_dll_directory(OSGEO4W_BIN)
-        # Also add the apps folder where other hidden dependencies live
-        os.add_dll_directory(os.path.join(OSGEO4W_ROOT, 'apps', 'qgis', 'bin'))
-        
-    SPATIALITE_LIBRARY_PATH = os.path.join(OSGEO4W_ROOT, 'bin', 'mod_spatialite.dll')
+    QGIS_BIN = os.path.join(OSGEO4W_ROOT, "bin")
+    GDAL_BIN = os.path.join(OSGEO4W_ROOT, "apps", "gdal", "bin")
+    QGIS_APP_BIN = os.path.join(OSGEO4W_ROOT, "apps", "qgis", "bin")
+    QT_BIN = os.path.join(OSGEO4W_ROOT, "apps", "Qt5", "bin")
+
+    os.environ["PATH"] = (
+        QGIS_BIN + ";" +
+        GDAL_BIN + ";" +
+        QGIS_APP_BIN + ";" +
+        QT_BIN + ";" +
+        os.environ.get("PATH", "")
+    )
+
+    os.environ["GDAL_DATA"] = os.path.join(OSGEO4W_ROOT, "apps", "gdal", "share", "gdal")
+    os.environ["PROJ_LIB"] = os.path.join(OSGEO4W_ROOT, "share", "proj")
+
+    GDAL_LIBRARY_PATH = os.path.join(QGIS_BIN, "gdal312.dll")
+    GEOS_LIBRARY_PATH = os.path.join(QGIS_BIN, "geos_c.dll")
+    SPATIALITE_LIBRARY_PATH = os.path.join(QGIS_BIN, "mod_spatialite.dll")
+
+    if hasattr(os, "add_dll_directory"):
+        os.add_dll_directory(QGIS_BIN)
+        os.add_dll_directory(GDAL_BIN)
+        os.add_dll_directory(QGIS_APP_BIN)
+        os.add_dll_directory(QT_BIN)
 
         
 load_dotenv()
+
 AI_API_KEY = os.getenv("AI_API_KEY")
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
@@ -137,12 +142,13 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # --- DATABASE ---
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.contrib.gis.db.backends.spatialite",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
+SPATIALITE_LIBRARY_PATH = r"C:\QGIS 3.44.7\bin\mod_spatialite.dll"
 # --- PASSWORD VALIDATION ---
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
