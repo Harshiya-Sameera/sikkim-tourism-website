@@ -53,7 +53,7 @@ pip install -r requirements.txt
 python manage.py runserver
 
 ## Contributors
-- Sameera
-- Vyshnavi
-- Ayyappa
-- Yallamanda
+- Sk.Harshiya Sameera
+- T.Vyshnavi
+- T.Ayyappa
+- T.Yallamanda
