@@ -36,6 +36,12 @@ Database: SQLite
 AI Integration: Gemini API
 GIS: Location mapping for tourist spots
 
+## Workflow
+1. User searches for tourist locations
+2. System fetches data from tourism dataset
+3. AI chatbot provides suggestions
+4. Itinerary module generates travel plan
+
 ## Setup Instructions
 
 1. Clone the repository
