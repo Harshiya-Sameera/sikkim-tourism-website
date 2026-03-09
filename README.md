@@ -29,6 +29,13 @@ tourism/
 templates/
 static/
 
+## System Architecture
+Frontend: HTML, CSS, JavaScript
+Backend: Django (Python)
+Database: SQLite
+AI Integration: Gemini API
+GIS: Location mapping for tourist spots
+
 ## Setup Instructions
 
 1. Clone the repository
