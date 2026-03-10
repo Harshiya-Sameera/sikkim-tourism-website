@@ -9,6 +9,12 @@ This project helps tourists explore Sikkim by providing:
 - AI chatbot assistance
 - Location based recommendations
 
+  ## Features
+- AI chatbot assistance
+- Smart itinerary generation
+- Tourist place recommendations
+- Location based suggestions
+
 ## Tech Stack
 - Python
 - Django
